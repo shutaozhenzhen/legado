@@ -32,21 +32,11 @@ jobs:
     outputs:
       version: ${{ steps.set-ver.outputs.version }}
       versionL: ${{ steps.set-ver.outputs.versionL }}
-      lanzou: ${{ steps.check.outputs.lanzou }}
-      telegram: ${{ steps.check.outputs.telegram }}
     steps:
       - id: set-ver
         run: |
           echo "version=$(date -d "8 hour" -u +3.%y.%m%d%H)" >> $GITHUB_OUTPUT
           echo "versionL=$(date -d "8 hour" -u +3.%y.%m%d%H%M)" >> $GITHUB_OUTPUT
-      - id: check
-        run: |
-          if [ ${{ secrets.LANZOU_ID }} ]; then
-            echo "lanzou=yes" >> $GITHUB_OUTPUT
-          fi
-          if [ ${{ secrets.BOT_TOKEN }} ]; then
-            echo "telegram=yes" >> $GITHUB_OUTPUT
-          fi
 
   build:
     needs: prepare
@@ -203,76 +193,3 @@ jobs:
             releaseA 为共存版本，可同时安装使用，功能没有区别。
           prerelease: true
           artifacts: ${{ github.workspace }}/apk/*.apk
-
-  lanzou:
-    needs: [ prepare, build ]
-    if: ${{ github.event_name != 'pull_request' && needs.prepare.outputs.lanzou == 'yes' }}
-    runs-on: ubuntu-latest
-    env:
-      # 登录蓝奏云后在控制台运行document.cookie
-      ylogin: ${{ secrets.LANZOU_ID }}
-      phpdisk_info: ${{ secrets.LANZOU_PSD }}
-      # 蓝奏云里的文件夹ID（阅读3测试版:2670621）
-      LANZOU_FOLDER_ID: ${{ secrets.LANZOU_FOLDER_ID }}
-      #蓝奏云分享链接
-      LANZOU_URL: ${{ secrets.LANZOU_URL }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
-        with:
-          path: apk/
-      - working-directory: apk/
-        run: mv */*.apk . ;rm -rf */
-      - name: Upload To Lanzou
-        continue-on-error: true
-        run: |
-          path="$GITHUB_WORKSPACE/apk/"
-          python3 $GITHUB_WORKSPACE/.github/scripts/lzy_web.py "$path" "$LANZOU_FOLDER_ID"
-          echo "[$(date -u -d '+8 hour' '+%Y.%m.%d %H:%M:%S')] 分享链接: $LANZOU_URL"
-
-  test_Branch:
-    needs: [ prepare, build ]
-    runs-on: ubuntu-latest
-    if: ${{ github.event_name != 'pull_request' && github.actor == 'gedoor' }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
-        with:
-          path: apk/
-      - working-directory: apk/
-        run: mv */*.apk . ;rm -rf */
-      - name: Push To "test" Branch
-        run: |
-          cd $GITHUB_WORKSPACE/apk/
-          git init
-          git checkout -b test
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git remote add origin "https://${{ github.actor }}:${{ secrets.ACTIONS_TOKEN }}@github.com/${{ github.actor }}/release"
-          git add *.apk
-          git commit -m "${{ needs.prepare.outputs.versionL }}"
-          git push -f -u origin test
-
-  telegram:
-    needs: [ prepare, build ]
-    if: ${{ github.event_name != 'pull_request' && needs.prepare.outputs.telegram == 'yes' }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
-        with:
-          path: apk/
-      - working-directory: apk/
-        run: |
-          for file in `ls */*.apk`; do
-            mv "$file" "$(echo "$file"|sed -e 's#.*\/##g' -e "s/_/ /g" -e 's/legado/阅读/')"
-          done
-          rm -rf */
-      - name: Post to channel
-        uses: xireiki/channel-post@v1
-        with:
-          chat_id: ${{ secrets.CHANNEL_ID }}
-          bot_token: ${{ secrets.BOT_TOKEN }}
-          context: "#阅读 #Legado #Beta ${{ needs.prepare.outputs.versionL }}"
-          path: apk/*
-          method: sendFile
