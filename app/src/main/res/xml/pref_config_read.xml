@@ -67,6 +67,14 @@
         app:isBottomBackground="true" />
 
     <io.legado.app.lib.prefs.SwitchPreference
+        android:defaultValue="true"
+        android:key="skipChapterConfirm"
+        android:title="跳转章节时确认"
+        android:summary="开启后拖进度条跳章节前需要确认，关闭后不再提醒"
+        app:iconSpaceReserved="false"
+        app:isBottomBackground="true" />
+
+    <io.legado.app.lib.prefs.SwitchPreference
         android:defaultValue="false"
         android:key="useZhLayout"
         android:title="@string/use_zh_layout"

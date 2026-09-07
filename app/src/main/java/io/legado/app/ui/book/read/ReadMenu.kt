@@ -62,7 +62,6 @@ class ReadMenu @JvmOverloads constructor(
     var canShowMenu: Boolean = false
     private val callBack: CallBack get() = activity as CallBack
     private val binding = ViewReadMenuBinding.inflate(LayoutInflater.from(context), this, true)
-    private var confirmSkipToChapter: Boolean = false
     private var isMenuOutAnimating = false
     private val menuTopIn: Animation by lazy {
         loadAnimation(context, R.anim.anim_readbook_top_in)
@@ -410,12 +409,12 @@ class ReadMenu @JvmOverloads constructor(
                 when (AppConfig.progressBarBehavior) {
                     "page" -> ReadBook.skipToPage(seekBar.progress)
                     "chapter" -> {
-                        if (confirmSkipToChapter) {
+                        if (!AppConfig.skipChapterConfirm) {
                             callBack.skipToChapter(seekBar.progress)
                         } else {
                             context.alert("章节跳转确认", "确定要跳转章节吗？") {
                                 yesButton {
-                                    confirmSkipToChapter = true
+                                    AppConfig.skipChapterConfirm = false
                                     callBack.skipToChapter(seekBar.progress)
                                 }
                                 noButton {

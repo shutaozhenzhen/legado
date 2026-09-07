@@ -503,6 +503,13 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
     val progressBarBehavior: String?
         get() = appCtx.getPrefString(PreferKey.progressBarBehavior, "page")
 
+    // 跳转章节是否需要确认（开启"不再提醒"后置为 false）
+    var skipChapterConfirm: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.skipChapterConfirm, true)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.skipChapterConfirm, value)
+        }
+
     val keyPageOnLongPress
         get() = appCtx.getPrefBoolean(PreferKey.keyPageOnLongPress, false)
 
