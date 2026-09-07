@@ -510,6 +510,13 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
             appCtx.putPrefBoolean(PreferKey.skipChapterConfirm, value)
         }
 
+    // 退出阅读时是否提示恢复到跳转前进度（默认开启，与当前行为一致）
+    var restoreProgressConfirm: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.restoreProgressConfirm, true)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.restoreProgressConfirm, value)
+        }
+
     val keyPageOnLongPress
         get() = appCtx.getPrefBoolean(PreferKey.keyPageOnLongPress, false)
 

@@ -136,6 +136,7 @@ object PreferKey {
     const val parallelExportBook = "parallelExportBook"
     const val progressBarBehavior = "progressBarBehavior"
     const val skipChapterConfirm = "skipChapterConfirm"
+    const val restoreProgressConfirm = "restoreProgressConfirm"
     const val sourceEditMaxLine = "sourceEditMaxLine"
     const val ttsTimer = "ttsTimer"
     const val noAnimScrollPage = "noAnimScrollPage"

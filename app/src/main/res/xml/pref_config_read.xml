@@ -75,6 +75,14 @@
         app:isBottomBackground="true" />
 
     <io.legado.app.lib.prefs.SwitchPreference
+        android:defaultValue="true"
+        android:key="restoreProgressConfirm"
+        android:title="退出时恢复跳转前进度提醒"
+        android:summary="关闭后退出阅读时不询问，直接恢复到跳转前的进度"
+        app:iconSpaceReserved="false"
+        app:isBottomBackground="true" />
+
+    <io.legado.app.lib.prefs.SwitchPreference
         android:defaultValue="false"
         android:key="useZhLayout"
         android:title="@string/use_zh_layout"

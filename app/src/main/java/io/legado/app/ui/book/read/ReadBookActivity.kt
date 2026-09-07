@@ -1241,6 +1241,11 @@ class ReadBookActivity : BaseReadBookActivity(),
 
     /* 恢复到 全文搜索/进度条跳转前的位置 */
     private fun restoreLastBookProcess() {
+        if (!AppConfig.restoreProgressConfirm) {
+            // 关闭了提醒：退出时直接恢复到跳转前进度
+            ReadBook.restoreLastBookProgress()
+            return
+        }
         if (confirmRestoreProcess == true) {
             ReadBook.restoreLastBookProgress()
         } else if (confirmRestoreProcess == null) {
