@@ -114,6 +114,11 @@ class MainActivity : VMBaseActivity<ActivityMainBinding, MainViewModel>(),
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        upBottomMenu()
+    }
+
     override fun onPostCreate(savedInstanceState: Bundle?) {
         super.onPostCreate(savedInstanceState)
         lifecycleScope.launch {

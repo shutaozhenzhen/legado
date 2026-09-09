@@ -88,6 +88,12 @@ abstract class BaseBookshelfFragment(layoutId: Int) : VMBaseFragment<BookshelfVi
 
     override fun onCompatCreateOptionsMenu(menu: Menu) {
         menuInflater.inflate(R.menu.main_bookshelf, menu)
+        if (AppConfig.localReadingOnly) {
+            menu.findItem(R.id.menu_search)?.isVisible = false
+            menu.findItem(R.id.menu_update_toc)?.isVisible = false
+            menu.findItem(R.id.menu_remote)?.isVisible = false
+            menu.findItem(R.id.menu_add_url)?.isVisible = false
+        }
     }
 
     override fun onCompatOptionsItemSelected(item: MenuItem) {
