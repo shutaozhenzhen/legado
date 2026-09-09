@@ -145,6 +145,8 @@ android {
     }
     lint {
         checkDependencies = true
+        // 可通过 -PskipLint 跳过 release 的 lintVital 检查（如 CI 测试构建加速）
+        checkReleaseBuilds = !project.hasProperty("skipLint")
     }
     tasks.withType(JavaCompile).tap {
         configureEach {
