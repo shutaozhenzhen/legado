@@ -60,6 +60,7 @@ class OtherConfigFragment : PreferenceFragment(),
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         putPrefBoolean(PreferKey.processText, isProcessTextEnabled())
         addPreferencesFromResource(R.xml.pref_config_other)
+        upLocalReadingOnly()
         upPreferenceSummary(PreferKey.userAgent, AppConfig.userAgent)
         upPreferenceSummary(PreferKey.preDownloadNum, AppConfig.preDownloadNum.toString())
         upPreferenceSummary(PreferKey.threadCount, AppConfig.threadCount.toString())
@@ -197,7 +198,12 @@ class OtherConfigFragment : PreferenceFragment(),
                 setProcessTextEnable(it.getBoolean(key, true))
             }
 
-            PreferKey.showDiscovery, PreferKey.showRss, PreferKey.localReadingOnly -> postEvent(EventBus.NOTIFY_MAIN, true)
+            PreferKey.localReadingOnly -> {
+                upLocalReadingOnly()
+                postEvent(EventBus.NOTIFY_MAIN, true)
+            }
+
+            PreferKey.showDiscovery, PreferKey.showRss -> postEvent(EventBus.NOTIFY_MAIN, true)
             PreferKey.language -> listView.postDelayed(1000) {
                 appCtx.restart()
             }
@@ -222,6 +228,12 @@ class OtherConfigFragment : PreferenceFragment(),
                 upPreferenceSummary(key, AppConfig.sourceEditMaxLine.toString())
             }
         }
+    }
+
+    private fun upLocalReadingOnly() {
+        val enabled = !AppConfig.localReadingOnly
+        findPreference<Preference>(PreferKey.showDiscovery)?.isEnabled = enabled
+        findPreference<Preference>(PreferKey.showRss)?.isEnabled = enabled
     }
 
     private fun upPreferenceSummary(preferenceKey: String, value: String?) {
