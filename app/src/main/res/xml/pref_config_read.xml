@@ -69,16 +69,16 @@
     <io.legado.app.lib.prefs.SwitchPreference
         android:defaultValue="true"
         android:key="skipChapterConfirm"
-        android:title="跳转章节时确认"
-        android:summary="开启后拖进度条跳章节前需要确认，关闭后不再提醒"
+        android:title="@string/skip_chapter_confirm"
+        android:summary="@string/skip_chapter_confirm_summary"
         app:iconSpaceReserved="false"
         app:isBottomBackground="true" />
 
     <io.legado.app.lib.prefs.SwitchPreference
         android:defaultValue="true"
         android:key="restoreProgressConfirm"
-        android:title="退出时恢复跳转前进度提醒"
-        android:summary="关闭后退出阅读时不询问，直接恢复到跳转前的进度"
+        android:title="@string/restore_progress_confirm"
+        android:summary="@string/restore_progress_confirm_summary"
         app:iconSpaceReserved="false"
         app:isBottomBackground="true" />
 

@@ -1051,6 +1051,10 @@
     <string name="local_no_group">本地未分组</string>
     <string name="parallel_export_book">多线程导出</string>
     <string name="progress_bar_behavior">进度条行为</string>
+    <string name="skip_chapter_confirm">跳轉章節時確認</string>
+    <string name="skip_chapter_confirm_summary">開啟後拖進度條跳章節前需要確認，關閉後不再提醒</string>
+    <string name="restore_progress_confirm">退出時恢復跳轉前進度提醒</string>
+    <string name="restore_progress_confirm_summary">關閉後退出閱讀時不詢問，直接恢復到跳轉前的進度</string>
     <string name="source_edit_text_max_line">源编辑框最大行数</string>
     <string name="source_edit_max_line_summary">%s,设置行数小于屏幕可显示的最大行数可以更方便的滑动到其他的字段进行编辑</string>
     <string name="restore_last_book_process">是否恢复到跳转前的阅读进度？</string>
