@@ -340,6 +340,7 @@ class BookInfoActivity :
         tvLasted.text = getString(R.string.lasted_show, book.latestChapterTitle)
         tvIntro.text = book.getDisplayIntro()
         llToc?.visible(!book.isWebFile)
+        tvChangeSource.visible(!AppConfig.localReadingOnly)
         upTvBookshelf()
         upKinds(book)
         upGroup(book.group)
@@ -502,6 +503,9 @@ class BookInfoActivity :
             }
         }
         tvAuthor.setOnClickListener {
+            if (AppConfig.localReadingOnly) {
+                return@setOnClickListener
+            }
             viewModel.getBook(false)?.let { book ->
                 startActivity<SearchActivity> {
                     putExtra("key", book.author)
@@ -509,6 +513,9 @@ class BookInfoActivity :
             }
         }
         tvName.setOnClickListener {
+            if (AppConfig.localReadingOnly) {
+                return@setOnClickListener
+            }
             viewModel.getBook(false)?.let { book ->
                 startActivity<SearchActivity> {
                     putExtra("key", book.name)
