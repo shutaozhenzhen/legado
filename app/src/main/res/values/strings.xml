@@ -1064,7 +1064,7 @@
     <string name="skip_chapter_confirm">Confirm chapter jump</string>
     <string name="skip_chapter_confirm_summary">When enabled, confirm before jumping chapters by dragging the progress bar; when disabled, no longer ask</string>
     <string name="restore_progress_confirm">Prompt to restore progress before jump on exit</string>
-    <string name="restore_progress_confirm_summary">When disabled, exit reading without asking and restore progress before the jump directly</string>
+    <string name="restore_progress_confirm_summary">When disabled, exit reading without asking and keep the current progress</string>
     <string name="source_edit_text_max_line">Maximum number of rows in the source edit box</string>
     <string name="source_edit_max_line_summary">%s,Setting the number of rows less than the maximum number of rows that can be displayed on the screen makes it easier to slide to other fields for editing.</string>
     <string name="restore_last_book_process">Whether to return to the reading progress before the jump？</string>

@@ -272,7 +272,7 @@ class ReadBookActivity : BaseReadBookActivity(),
                 return@addCallback
             }
             //拦截返回供恢复阅读进度
-            if (ReadBook.lastBookProgress != null && confirmRestoreProcess != false) {
+            if (ReadBook.lastBookProgress != null && confirmRestoreProcess != false && AppConfig.restoreProgressConfirm) {
                 restoreLastBookProcess()
                 return@addCallback
             }
@@ -1242,8 +1242,8 @@ class ReadBookActivity : BaseReadBookActivity(),
     /* 恢复到 全文搜索/进度条跳转前的位置 */
     private fun restoreLastBookProcess() {
         if (!AppConfig.restoreProgressConfirm) {
-            // 关闭了提醒：退出时直接恢复到跳转前进度
-            ReadBook.restoreLastBookProgress()
+            // 关闭了提醒：退出时不恢复，保持当前进度
+            ReadBook.lastBookProgress = null
             return
         }
         if (confirmRestoreProcess == true) {

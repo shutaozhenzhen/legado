@@ -1062,7 +1062,7 @@
     <string name="skip_chapter_confirm">跳转章节时确认</string>
     <string name="skip_chapter_confirm_summary">开启后拖进度条跳章节前需要确认，关闭后不再提醒</string>
     <string name="restore_progress_confirm">退出时恢复跳转前进度提醒</string>
-    <string name="restore_progress_confirm_summary">关闭后退出阅读时不询问，直接恢复到跳转前的进度</string>
+    <string name="restore_progress_confirm_summary">关闭后退出阅读时不询问，保持当前进度</string>
     <string name="source_edit_text_max_line">源编辑框最大行数</string>
     <string name="source_edit_max_line_summary">%s,设置行数小于屏幕可显示的最大行数可以更方便的滑动到其他的字段进行编辑</string>
     <string name="restore_last_book_process">是否恢复到跳转前的阅读进度？</string>
