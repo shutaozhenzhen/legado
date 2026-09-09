@@ -219,6 +219,12 @@ object AppConfig : SharedPreferences.OnSharedPreferenceChangeListener {
     val localReadingOnly: Boolean
         get() = appCtx.getPrefBoolean(PreferKey.localReadingOnly, false)
 
+    var importGroupByFolder: Boolean
+        get() = appCtx.getPrefBoolean(PreferKey.importGroupByFolder, false)
+        set(value) {
+            appCtx.putPrefBoolean(PreferKey.importGroupByFolder, value)
+        }
+
     val showDiscovery: Boolean
         get() = !localReadingOnly && appCtx.getPrefBoolean(PreferKey.showDiscovery, true)
 

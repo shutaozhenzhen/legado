@@ -31,6 +31,7 @@ import io.legado.app.utils.isContentScheme
 import io.legado.app.utils.isUri
 import io.legado.app.utils.launch
 import io.legado.app.utils.putPrefInt
+import io.legado.app.utils.toastOnUi
 import io.legado.app.utils.visible
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
@@ -85,6 +86,8 @@ class ImportBookActivity : BaseImportBookActivity<ImportBookViewModel>(),
         menu.findItem(R.id.menu_sort_name)?.isChecked = viewModel.sort == 0
         menu.findItem(R.id.menu_sort_size)?.isChecked = viewModel.sort == 1
         menu.findItem(R.id.menu_sort_time)?.isChecked = viewModel.sort == 2
+        menu.findItem(R.id.menu_import_group_by_folder)?.isChecked =
+            AppConfig.importGroupByFolder
         return super.onMenuOpened(featureId, menu)
     }
 
@@ -92,6 +95,11 @@ class ImportBookActivity : BaseImportBookActivity<ImportBookViewModel>(),
         when (item.itemId) {
             R.id.menu_select_folder -> selectFolder.launch()
             R.id.menu_scan_folder -> scanFolder()
+            R.id.menu_import_group_by_folder -> {
+                AppConfig.importGroupByFolder = !AppConfig.importGroupByFolder
+                toastOnUi(R.string.import_group_by_folder)
+            }
+
             R.id.menu_import_file_name -> alertImportFileName()
             R.id.menu_sort_name -> upSort(0)
             R.id.menu_sort_size -> upSort(1)

@@ -6,6 +6,9 @@ import io.legado.app.constant.AppLog
 import io.legado.app.constant.AppPattern.archiveFileRegex
 import io.legado.app.constant.AppPattern.bookFileRegex
 import io.legado.app.constant.PreferKey
+import io.legado.app.data.appDb
+import io.legado.app.data.entities.BookGroup
+import io.legado.app.help.config.AppConfig
 import io.legado.app.model.localBook.LocalBook
 import io.legado.app.utils.AlphanumComparator
 import io.legado.app.utils.FileDoc
@@ -43,17 +46,17 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
 
         dataCallback = object : DataCallback {
 
-            override fun setItems(fileDocs: List<FileDoc>) {
+            override fun setItems(fileDocs: List<FileDoc>, folderName: String?) {
                 list.clear()
                 fileDocs.mapTo(list) {
-                    ImportBook(it)
+                    ImportBook(it, folderName)
                 }
                 trySend(list)
             }
 
-            override fun addItems(fileDocs: List<FileDoc>) {
+            override fun addItems(fileDocs: List<FileDoc>, folderName: String?) {
                 fileDocs.mapTo(list) {
-                    ImportBook(it)
+                    ImportBook(it, folderName)
                 }
                 trySend(list)
             }
@@ -95,7 +98,22 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
             val fileUris = bookList.map {
                 it.file.uri
             }
-            LocalBook.importFiles(fileUris)
+            if (AppConfig.importGroupByFolder) {
+                val folderOf = bookList.associate { it.file.uri to it.folderName }
+                val groupCache = HashMap<String, Long>()
+                LocalBook.importFiles(fileUris) { uri ->
+                    val folderName = folderOf[uri]
+                    if (folderName.isNullOrBlank()) {
+                        0L
+                    } else {
+                        groupCache.getOrPut(folderName) {
+                            createOrGetGroup(folderName)
+                        }
+                    }
+                }
+            } else {
+                LocalBook.importFiles(fileUris)
+            }
         }.onError {
             context.toastOnUi("添加书架失败，请尝试重新选择文件夹")
             AppLog.put("添加书架失败\n${it.localizedMessage}", it)
@@ -104,6 +122,19 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
         }.onFinally {
             finally.invoke()
         }
+    }
+
+    private fun createOrGetGroup(name: String): Long {
+        appDb.bookGroupDao.getByName(name)?.let {
+            return it.groupId
+        }
+        val group = BookGroup(
+            groupId = appDb.bookGroupDao.getUnusedId(),
+            groupName = name,
+            order = appDb.bookGroupDao.maxOrder + 1
+        )
+        appDb.bookGroupDao.insert(group)
+        return group.groupId
     }
 
     fun deleteDoc(bookList: HashSet<ImportBook>, finally: () -> Unit) {
@@ -125,7 +156,7 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
                     else -> item.name.matches(bookFileRegex) || item.name.matches(archiveFileRegex)
                 }
             }
-            dataCallback?.setItems(docList!!)
+            dataCallback?.setItems(docList!!, fileDoc.name)
         }.onError {
             context.toastOnUi("获取文件列表出错\n${it.localizedMessage}")
         }
@@ -139,8 +170,8 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
         val list = arrayListOf<FileDoc>()
         channel.consumeAsFlow()
             .mapParallel(16) { fileDoc ->
-                fileDoc.list()!!
-            }.onEach { fileDocs ->
+                fileDoc to fileDoc.list()!!
+            }.onEach { (parentDoc, fileDocs) ->
                 n--
                 list.clear()
                 fileDocs.forEach {
@@ -153,7 +184,7 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
                         list.add(it)
                     }
                 }
-                dataCallback?.addItems(list)
+                dataCallback?.addItems(list, parentDoc.name)
             }.takeWhile {
                 n > 0
             }.catch {
@@ -168,9 +199,9 @@ class ImportBookViewModel(application: Application) : BaseViewModel(application)
 
     interface DataCallback {
 
-        fun setItems(fileDocs: List<FileDoc>)
+        fun setItems(fileDocs: List<FileDoc>, folderName: String?)
 
-        fun addItems(fileDocs: List<FileDoc>)
+        fun addItems(fileDocs: List<FileDoc>, folderName: String?)
 
         fun clear()
 
