@@ -82,8 +82,9 @@ android {
                 manifestPlaceholders.put("app_name", "@string/app_name")
             }
 
-            minifyEnabled true
-            shrinkResources = true
+            // 可通过 -PskipMinify 跳过混淆与资源压缩（如 CI 测试构建加速）
+            minifyEnabled !project.hasProperty("skipMinify")
+            shrinkResources = !project.hasProperty("skipMinify")
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro', 'cronet-proguard-rules.pro'
         }
         debug {
