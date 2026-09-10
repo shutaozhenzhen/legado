@@ -38,6 +38,9 @@ jobs:
       VERSION: ${{ needs.prepare.outputs.version }}
     steps:
       - uses: actions/checkout@v7
+        with:
+          # versionCode = 10000 + git rev-list 全量计数(app/build.gradle)，须全量历史
+          fetch-depth: 0
 
       - name: Set up JDK 17
         uses: actions/setup-java@v6
