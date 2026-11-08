@@ -1,0 +1,2000 @@
+{
+  "version": "1.0.0",
+  "project": {
+    "name": "legado / model.localBook",
+    "languages": [
+      "kotlin",
+      "markdown"
+    ],
+    "frameworks": [
+      "Android"
+    ],
+    "description": "Legado 本地书籍模块：epub/mobi/pdf/txt/umd 解析器与 LocalBook 导入门面（本地导入、分组、书架同步入口）。",
+    "analyzedAt": "2026-11-08T08:05:55.929Z",
+    "gitCommitHash": ""
+  },
+  "nodes": [
+    {
+      "id": "document:README.md",
+      "type": "document",
+      "name": "README.md",
+      "filePath": "README.md",
+      "summary": "localBook 模块的中文速查说明，逐条列出解析接口、导入总入口以及 txt/epub/pdf/umd 各解析器的职责。",
+      "tags": [
+        "documentation",
+        "entry-point",
+        "local-book",
+        "overview"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:BaseLocalBookParse.kt",
+      "type": "file",
+      "name": "BaseLocalBookParse.kt",
+      "filePath": "BaseLocalBookParse.kt",
+      "summary": "定义本地书籍解析器的统一接口 BaseLocalBookParse，规定信息回填、目录、正文、图片四个能力，供各格式解析器的 companion object 实现。",
+      "tags": [
+        "interface",
+        "local-book",
+        "contract",
+        "parser"
+      ],
+      "complexity": "simple",
+      "languageNotes": "Kotlin 中以 interface 的 companion object 方式实现该接口，使各解析器既能单例复用又对外暴露统一 API。"
+    },
+    {
+      "id": "class:BaseLocalBookParse.kt:BaseLocalBookParse",
+      "type": "class",
+      "name": "BaseLocalBookParse",
+      "filePath": "BaseLocalBookParse.kt",
+      "lineRange": [
+        11,
+        21
+      ],
+      "summary": "本地书籍解析契约：声明 upBookInfo、getChapterList、getContent、getImage 四个方法，由 EpubFile/MobiFile/PdfFile/UmdFile 的 companion object 实现。",
+      "tags": [
+        "interface",
+        "contract",
+        "local-book",
+        "data-model"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:BaseLocalBookParse.kt:upBookInfo",
+      "type": "function",
+      "name": "upBookInfo",
+      "filePath": "BaseLocalBookParse.kt",
+      "lineRange": [
+        13,
+        13
+      ],
+      "summary": "接口方法：从文件元数据回填书名、作者、简介与封面等 Book 字段。",
+      "tags": [
+        "interface",
+        "metadata",
+        "local-book"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:BaseLocalBookParse.kt:getChapterList",
+      "type": "function",
+      "name": "getChapterList",
+      "filePath": "BaseLocalBookParse.kt",
+      "lineRange": [
+        15,
+        15
+      ],
+      "summary": "接口方法：解析并返回书籍目录（ArrayList<BookChapter>）。",
+      "tags": [
+        "interface",
+        "toc",
+        "local-book"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:BaseLocalBookParse.kt:getContent",
+      "type": "function",
+      "name": "getContent",
+      "filePath": "BaseLocalBookParse.kt",
+      "lineRange": [
+        17,
+        17
+      ],
+      "summary": "接口方法：按 BookChapter 取出该章正文（HTML 或纯文本）。",
+      "tags": [
+        "interface",
+        "content",
+        "local-book"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:BaseLocalBookParse.kt:getImage",
+      "type": "function",
+      "name": "getImage",
+      "filePath": "BaseLocalBookParse.kt",
+      "lineRange": [
+        19,
+        19
+      ],
+      "summary": "接口方法：按正文中的 href 返回内嵌图片的 InputStream。",
+      "tags": [
+        "interface",
+        "image",
+        "local-book"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:EpubFile.kt",
+      "type": "file",
+      "name": "EpubFile.kt",
+      "filePath": "EpubFile.kt",
+      "summary": "EPUB 解析器：借助 epublib 懒加载 EpubBook，完成元数据与封面回填、基于 TOCReference 与 fragmentId 的目录切分，以及按章节拼接 xhtml 正文。",
+      "tags": [
+        "epub",
+        "parser",
+        "local-book",
+        "toc",
+        "html"
+      ],
+      "complexity": "complex",
+      "languageNotes": "companion object 按 bookUrl 缓存单个 EpubFile 实例；用 ParcelFileDescriptor 配合 AndroidZipFile 懒加载压缩包，避免一次性解包导致 OOM。"
+    },
+    {
+      "id": "class:EpubFile.kt:EpubFile",
+      "type": "class",
+      "name": "EpubFile",
+      "filePath": "EpubFile.kt",
+      "lineRange": [
+        33,
+        438
+      ],
+      "summary": "EPUB 文件解析实现，内部持有 ParcelFileDescriptor 与懒加载的 EpubBook，负责封面、元数据、目录（含卷首与 fragment 截取）和正文提取。",
+      "tags": [
+        "epub",
+        "parser",
+        "singleton",
+        "local-book"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:EpubFile.kt:readEpub",
+      "type": "function",
+      "name": "readEpub",
+      "filePath": "EpubFile.kt",
+      "lineRange": [
+        106,
+        121
+      ],
+      "summary": "把书籍文件包装成 ParcelFileDescriptor，再用 AndroidZipFile 交给 EpubReader.readEpubLazy 懒加载 EpubBook，失败时记录日志并抛出异常。",
+      "tags": [
+        "epub",
+        "io",
+        "lazy-load"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:EpubFile.kt:getContent",
+      "type": "function",
+      "name": "getContent",
+      "filePath": "EpubFile.kt",
+      "lineRange": [
+        123,
+        180
+      ],
+      "summary": "按章节首个 resource 的 href 遍历 contents，用 startFragmentId/endFragmentId 截取当前章内容，移除 title、隐藏元素与冗余属性后交给 HtmlFormatter 格式化。",
+      "tags": [
+        "content",
+        "html",
+        "fragment"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:EpubFile.kt:getBody",
+      "type": "function",
+      "name": "getBody",
+      "filePath": "EpubFile.kt",
+      "lineRange": [
+        182,
+        250
+      ],
+      "summary": "解析单个 xhtml resource 的 body：识别 titlepage/cover 生成封面图，按 fragmentId 截取片段，把 SVG image 转成 img 并解析为绝对路径。",
+      "tags": [
+        "html",
+        "xhtml",
+        "jsoup",
+        "fragment"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:EpubFile.kt:upBookCover",
+      "type": "function",
+      "name": "upBookCover",
+      "filePath": "EpubFile.kt",
+      "lineRange": [
+        258,
+        280
+      ],
+      "summary": "从 epub 封面资源解码 Bitmap 并以 JPEG 质量 90 写入 covers 目录；fastCheck 为真且封面文件已存在时直接跳过。",
+      "tags": [
+        "cover",
+        "image",
+        "bitmap"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:EpubFile.kt:upBookInfo",
+      "type": "function",
+      "name": "upBookInfo",
+      "filePath": "EpubFile.kt",
+      "lineRange": [
+        282,
+        308
+      ],
+      "summary": "读取 metadata 回填书名（缺失时用去 .epub 的文件名）、作者与简介（XML 简介先用 Jsoup 转纯文本）；读取失败则清空缓存并标记“书籍导入异常”。",
+      "tags": [
+        "metadata",
+        "book-info",
+        "jsoup"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:EpubFile.kt:getChapterList",
+      "type": "function",
+      "name": "getChapterList",
+      "filePath": "EpubFile.kt",
+      "lineRange": [
+        310,
+        356
+      ],
+      "summary": "优先按 NCX 目录解析（parseFirstPage 补卷首 + parseMenu 递归展开）；目录为空时退化为按 spine 顺序生成章节，最后统一重排 index。",
+      "tags": [
+        "toc",
+        "epub",
+        "fallback"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:EpubFile.kt:parseFirstPage",
+      "type": "function",
+      "name": "parseFirstPage",
+      "filePath": "EpubFile.kt",
+      "lineRange": [
+        361,
+        407
+      ],
+      "summary": "在第一章之前按 contents 顺序生成封面、引言、扉页等“卷首”章节，并维护 startFragmentId/endFragmentId 与 nextUrl 变量。",
+      "tags": [
+        "toc",
+        "fragment",
+        "epub"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:EpubFile.kt:parseMenu",
+      "type": "function",
+      "name": "parseMenu",
+      "filePath": "EpubFile.kt",
+      "lineRange": [
+        409,
+        431
+      ],
+      "summary": "递归把 TOCReference 树展开成扁平的 BookChapter 列表，标记卷节点并回写上一章的 endFragmentId 与 nextUrl。",
+      "tags": [
+        "toc",
+        "recursion",
+        "epub"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:LocalBook.kt",
+      "type": "file",
+      "name": "LocalBook.kt",
+      "filePath": "LocalBook.kt",
+      "summary": "本地书籍导入与解析总入口：按书籍类型分发到各格式解析器，并负责文件落盘、压缩包 / 在线 URL / WebDAV 导入、书架增删与书籍信息合并。",
+      "tags": [
+        "entry-point",
+        "import",
+        "local-book",
+        "dispatcher"
+      ],
+      "complexity": "complex",
+      "languageNotes": "Kotlin object 单例，以 when + Book 的类型扩展属性（isEpub/isMobi/isPdf/isUmd）做分发，未命中全部走 TextFile。"
+    },
+    {
+      "id": "class:LocalBook.kt:LocalBook",
+      "type": "class",
+      "name": "LocalBook",
+      "filePath": "LocalBook.kt",
+      "lineRange": [
+        68,
+        525
+      ],
+      "summary": "本地书籍门面单例：对外提供取流、取目录、取正文、导入、删除、保存文件等入口，内部调度 EpubFile/MobiFile/PdfFile/TextFile/UmdFile。",
+      "tags": [
+        "entry-point",
+        "singleton",
+        "import",
+        "local-book"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:LocalBook.kt:getBookInputStream",
+      "type": "function",
+      "name": "getBookInputStream",
+      "filePath": "LocalBook.kt",
+      "lineRange": [
+        77,
+        102
+      ],
+      "summary": "取得书籍文件输入流：本地 uri 失效时先尝试从原压缩包重新导入、再从 WebDAV 下载，全部失败才抛 FileNotFoundException。",
+      "tags": [
+        "io",
+        "stream",
+        "webdav"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:LocalBook.kt:getLastModified",
+      "type": "function",
+      "name": "getLastModified",
+      "filePath": "LocalBook.kt",
+      "lineRange": [
+        104,
+        116
+      ],
+      "summary": "读取书籍文件最后修改时间，content:// 走 DocumentFile、普通路径走 File，结果包在 Result 中返回。",
+      "tags": [
+        "io",
+        "metadata",
+        "file"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:LocalBook.kt:getChapterList",
+      "type": "function",
+      "name": "getChapterList",
+      "filePath": "LocalBook.kt",
+      "lineRange": [
+        118,
+        160
+      ],
+      "summary": "按书籍类型分发取目录，去重后重排 index、补空标题，并回填总章数、当前/最新章节标题与时间；目录为空抛 TocEmptyException。",
+      "tags": [
+        "toc",
+        "dispatch",
+        "dedupe"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:LocalBook.kt:getContent",
+      "type": "function",
+      "name": "getContent",
+      "filePath": "LocalBook.kt",
+      "lineRange": [
+        162,
+        203
+      ],
+      "summary": "按书籍类型分发取正文，异常时返回失败提示文案；epub 内容额外做 HTML4 反转义以修复实体编码问题。",
+      "tags": [
+        "content",
+        "dispatch",
+        "html"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:LocalBook.kt:getCoverPath",
+      "type": "function",
+      "name": "getCoverPath",
+      "filePath": "LocalBook.kt",
+      "lineRange": [
+        205,
+        207
+      ],
+      "summary": "按 bookUrl 的 MD5 生成 covers 目录下的封面文件路径，私有重载（209-215 行）承担实际路径拼接。",
+      "tags": [
+        "cover",
+        "path",
+        "utility"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:LocalBook.kt:importFileOnLine",
+      "type": "function",
+      "name": "importFileOnLine",
+      "filePath": "LocalBook.kt",
+      "lineRange": [
+        220,
+        226
+      ],
+      "summary": "在线导入入口：先 saveBookFile 把网络内容落盘，再复用本地 importFile 完成入库。",
+      "tags": [
+        "import",
+        "online",
+        "entry-point"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:LocalBook.kt:importFile",
+      "type": "function",
+      "name": "importFile",
+      "filePath": "LocalBook.kt",
+      "lineRange": [
+        231,
+        265
+      ],
+      "summary": "从 Uri 导入书籍：空文件抛 EmptyFileException；新书按文件名解析书名/作者后入库，已存在则清缓存、删原目录并重新解析书籍信息。",
+      "tags": [
+        "import",
+        "book",
+        "entry-point"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:LocalBook.kt:upBookInfo",
+      "type": "function",
+      "name": "upBookInfo",
+      "filePath": "LocalBook.kt",
+      "lineRange": [
+        267,
+        274
+      ],
+      "summary": "按书籍类型分发调用各解析器的 upBookInfo 回填书名、作者、简介与封面。",
+      "tags": [
+        "metadata",
+        "dispatch",
+        "book-info"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:LocalBook.kt:importArchiveFile",
+      "type": "function",
+      "name": "importArchiveFile",
+      "filePath": "LocalBook.kt",
+      "lineRange": [
+        277,
+        297
+      ],
+      "summary": "解压压缩包并按 filter 过滤条目，逐个保存为书籍文件后导入，并为 Book 打上 archive 类型与压缩包来源标记。",
+      "tags": [
+        "import",
+        "archive",
+        "batch"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:LocalBook.kt:importFiles",
+      "type": "function",
+      "name": "importFiles",
+      "filePath": "LocalBook.kt",
+      "lineRange": [
+        300,
+        339
+      ],
+      "summary": "导入一个或多个 Uri：压缩包先解压并按 bookFileRegex 过滤，普通文件直接 importFile；批量重载支持按来源指定 groupId 并统计失败数量。",
+      "tags": [
+        "import",
+        "batch",
+        "archive"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:LocalBook.kt:analyzeNameAuthor",
+      "type": "function",
+      "name": "analyzeNameAuthor",
+      "filePath": "LocalBook.kt",
+      "lineRange": [
+        344,
+        382
+      ],
+      "summary": "解析文件名得到书名与作者：优先执行用户自定义的 bookImportFileName JS 脚本，其次匹配内置《书名》/作者 正则，最后退回 BookHelp 格式化。",
+      "tags": [
+        "filename",
+        "metadata",
+        "rhino"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:LocalBook.kt:deleteBook",
+      "type": "function",
+      "name": "deleteBook",
+      "filePath": "LocalBook.kt",
+      "lineRange": [
+        384,
+        399
+      ],
+      "summary": "删除书籍缓存与封面文件，可选同时删除原始文件（content:// 走 DocumentFile.delete，普通路径走 FileUtils）。",
+      "tags": [
+        "deletion",
+        "cache",
+        "file"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:LocalBook.kt:saveBookFile",
+      "type": "function",
+      "name": "saveBookFile",
+      "filePath": "LocalBook.kt",
+      "lineRange": [
+        404,
+        464
+      ],
+      "summary": "把书籍内容写入书籍目录：suspend 重载支持 http/https 与 DataURL 下载，另一个重载统一把 InputStream 写入 DocumentFile 或普通文件并返回 Uri。",
+      "tags": [
+        "io",
+        "download",
+        "storage"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:LocalBook.kt:mergeBook",
+      "type": "function",
+      "name": "mergeBook",
+      "filePath": "LocalBook.kt",
+      "lineRange": [
+        473,
+        482
+      ],
+      "summary": "文件类书籍合并在线书籍信息，在线字段非空时覆盖本地书名、作者、封面与简介并保存。",
+      "tags": [
+        "merge",
+        "metadata",
+        "book"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:LocalBook.kt:downloadRemoteBook",
+      "type": "function",
+      "name": "downloadRemoteBook",
+      "filePath": "LocalBook.kt",
+      "lineRange": [
+        485,
+        523
+      ],
+      "summary": "从 WebDAV 下载书籍文件，按压缩包/单文件两种方式重新落盘并更新 bookUrl，兼容旧版链接的鉴权方式。",
+      "tags": [
+        "webdav",
+        "download",
+        "import"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "file:MobiFile.kt",
+      "type": "file",
+      "name": "MobiFile.kt",
+      "filePath": "MobiFile.kt",
+      "summary": "MOBI/AZW3 解析器：用 MobiReader 读取 MobiBook，并按 KF6/KF8 两种格式分别构建目录、拼接 section 正文、取出图片与封面。",
+      "tags": [
+        "mobi",
+        "parser",
+        "local-book",
+        "kf8"
+      ],
+      "complexity": "complex",
+      "languageNotes": "KF8 用 POS/URI fragment 定位章节边界并跳过非 linear section，KF6 则依据 sectionIdMap 判断章节起点。"
+    },
+    {
+      "id": "class:MobiFile.kt:MobiFile",
+      "type": "class",
+      "name": "MobiFile",
+      "filePath": "MobiFile.kt",
+      "lineRange": [
+        23,
+        318
+      ],
+      "summary": "MOBI 文件解析实现，持有文件描述符与懒加载的 MobiBook，按 KF6/KF8 分支处理目录、正文、图片、封面与元信息。",
+      "tags": [
+        "mobi",
+        "parser",
+        "singleton",
+        "local-book"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:MobiFile.kt:readMobi",
+      "type": "function",
+      "name": "readMobi",
+      "filePath": "MobiFile.kt",
+      "lineRange": [
+        78,
+        88
+      ],
+      "summary": "通过 BookHelp.getBookPFD 打开文件描述符后交给 MobiReader.readMobi，失败时记录日志并抛出。",
+      "tags": [
+        "mobi",
+        "io",
+        "lazy-load"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:MobiFile.kt:getChapterList",
+      "type": "function",
+      "name": "getChapterList",
+      "filePath": "MobiFile.kt",
+      "lineRange": [
+        90,
+        96
+      ],
+      "summary": "按 MobiBook 的实际类型（KF8Book / KF6Book）分发到对应的目录解析实现。",
+      "tags": [
+        "mobi",
+        "dispatch",
+        "toc"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:MobiFile.kt:getChapterListKF6",
+      "type": "function",
+      "name": "getChapterListKF6",
+      "filePath": "MobiFile.kt",
+      "lineRange": [
+        98,
+        137
+      ],
+      "summary": "解析 KF6 目录：必要时补“卷首”章节，递归展开 TOC 子项，标记卷节点并处理卷/章 href 相同时的 skip 情况。",
+      "tags": [
+        "mobi",
+        "toc",
+        "recursion"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:MobiFile.kt:getChapterListKF8",
+      "type": "function",
+      "name": "getChapterListKF8",
+      "filePath": "MobiFile.kt",
+      "lineRange": [
+        139,
+        178
+      ],
+      "summary": "解析 KF8 目录：从首个 href 非空的 section 补卷首，递归展开 TOC 并维护 nextUrl 与卷标记。",
+      "tags": [
+        "mobi",
+        "kf8",
+        "toc"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:MobiFile.kt:getContent",
+      "type": "function",
+      "name": "getContent",
+      "filePath": "MobiFile.kt",
+      "lineRange": [
+        180,
+        186
+      ],
+      "summary": "按 MobiBook 类型分发到 KF8/KF6 的正文提取实现。",
+      "tags": [
+        "mobi",
+        "dispatch",
+        "content"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:MobiFile.kt:getContentKF6",
+      "type": "function",
+      "name": "getContentKF6",
+      "filePath": "MobiFile.kt",
+      "lineRange": [
+        188,
+        217
+      ],
+      "summary": "按 href 定位起始 section 并顺次拼接后续 section 直到下一章或新章节起点，再用 Jsoup 清理 title/隐藏元素并把 recindex 图片改写为 src。",
+      "tags": [
+        "mobi",
+        "content",
+        "jsoup"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:MobiFile.kt:getContentKF8",
+      "type": "function",
+      "name": "getContentKF8",
+      "filePath": "MobiFile.kt",
+      "lineRange": [
+        219,
+        250
+      ],
+      "summary": "按 POS fragment 计算本段终点，跳过非 linear section 拼接正文，最后交给 format 清理 XML/DOCTYPE 声明。",
+      "tags": [
+        "mobi",
+        "kf8",
+        "content"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:MobiFile.kt:upBookCover",
+      "type": "function",
+      "name": "upBookCover",
+      "filePath": "MobiFile.kt",
+      "lineRange": [
+        274,
+        296
+      ],
+      "summary": "解码 mobi 内嵌封面字节为 Bitmap 并以 JPEG 质量 90 写入 covers 目录，fastCheck 时跳过已存在的封面。",
+      "tags": [
+        "cover",
+        "image",
+        "bitmap"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:MobiFile.kt:upBookInfo",
+      "type": "function",
+      "name": "upBookInfo",
+      "filePath": "MobiFile.kt",
+      "lineRange": [
+        298,
+        316
+      ],
+      "summary": "用 metadata 回填书名（缺失时去掉 .mobi/.azw3 扩展名）、第一作者与简介（简介经 HtmlFormatter 格式化）。",
+      "tags": [
+        "metadata",
+        "book-info",
+        "mobi"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "file:PdfFile.kt",
+      "type": "file",
+      "name": "PdfFile.kt",
+      "filePath": "PdfFile.kt",
+      "summary": "PDF 解析器（纯图片模式）：用 PdfRenderer 逐页渲染，按每 10 页切分“章节”，正文以 img 标签返回，图片按页渲染为 Bitmap 流。",
+      "tags": [
+        "pdf",
+        "parser",
+        "render",
+        "local-book"
+      ],
+      "complexity": "complex",
+      "languageNotes": "章节不是语义目录，而是 PAGE_SIZE=10 的固定分页；正文只是 <img src=\"页码\"> 列表，真正渲染发生在 getImage。"
+    },
+    {
+      "id": "class:PdfFile.kt:PdfFile",
+      "type": "class",
+      "name": "PdfFile",
+      "filePath": "PdfFile.kt",
+      "lineRange": [
+        24,
+        230
+      ],
+      "summary": "PDF 文件解析实现，持有 ParcelFileDescriptor 与 PdfRenderer，负责分页目录、逐页渲染正文/图片/封面与资源关闭。",
+      "tags": [
+        "pdf",
+        "parser",
+        "render",
+        "singleton"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:PdfFile.kt:readPdf",
+      "type": "function",
+      "name": "readPdf",
+      "filePath": "PdfFile.kt",
+      "lineRange": [
+        87,
+        101
+      ],
+      "summary": "按 uri 是 content:// 还是普通路径分别打开 ParcelFileDescriptor，并据此构造 PdfRenderer。",
+      "tags": [
+        "pdf",
+        "io",
+        "lazy-load"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:PdfFile.kt:openPdfPage",
+      "type": "function",
+      "name": "openPdfPage",
+      "filePath": "PdfFile.kt",
+      "lineRange": [
+        121,
+        135
+      ],
+      "summary": "按索引渲染单页：以屏幕宽度等比计算高度，白底后按 RENDER_MODE_FOR_DISPLAY 绘制到 Bitmap，越界返回 null。",
+      "tags": [
+        "pdf",
+        "render",
+        "bitmap"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:PdfFile.kt:getContent",
+      "type": "function",
+      "name": "getContent",
+      "filePath": "PdfFile.kt",
+      "lineRange": [
+        137,
+        154
+      ],
+      "summary": "把本章覆盖的最多 10 页拼成 <img src=\"页码\"> 形式的 HTML 正文，供阅读器按页取图。",
+      "tags": [
+        "pdf",
+        "content",
+        "html"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:PdfFile.kt:getImage",
+      "type": "function",
+      "name": "getImage",
+      "filePath": "PdfFile.kt",
+      "lineRange": [
+        157,
+        173
+      ],
+      "summary": "按 href 中的页码渲染对应页面并转换为 InputStream，异常时返回 null。",
+      "tags": [
+        "pdf",
+        "image",
+        "render"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:PdfFile.kt:getChapterList",
+      "type": "function",
+      "name": "getChapterList",
+      "filePath": "PdfFile.kt",
+      "lineRange": [
+        175,
+        192
+      ],
+      "summary": "按 PAGE_SIZE=10 把总页数向上取整切分为若干“分段_N”章节，url 记为 pdf_N。",
+      "tags": [
+        "pdf",
+        "toc",
+        "pagination"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:PdfFile.kt:upBookCover",
+      "type": "function",
+      "name": "upBookCover",
+      "filePath": "PdfFile.kt",
+      "lineRange": [
+        194,
+        212
+      ],
+      "summary": "渲染第 0 页作为封面并以 JPEG 质量 90 写入 covers 目录，fastCheck 时跳过已存在封面。",
+      "tags": [
+        "cover",
+        "pdf",
+        "image"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:PdfFile.kt:upBookInfo",
+      "type": "function",
+      "name": "upBookInfo",
+      "filePath": "PdfFile.kt",
+      "lineRange": [
+        214,
+        225
+      ],
+      "summary": "回填封面；书名缺失时用去 .pdf 扩展名的文件名，渲染器为空则清缓存并标记“书籍导入异常”。",
+      "tags": [
+        "metadata",
+        "pdf",
+        "book-info"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:TextFile.kt",
+      "type": "file",
+      "name": "TextFile.kt",
+      "filePath": "TextFile.kt",
+      "summary": "TXT 解析器：分块读取文件字节，用 txt 目录规则正则或固定长度切分章节，并以字节偏移实现正文的随机读取。",
+      "tags": [
+        "txt",
+        "parser",
+        "toc",
+        "local-book"
+      ],
+      "complexity": "complex",
+      "languageNotes": "自维护 512KB 解析缓冲与 8MB 章节读取缓冲，章节边界以字节偏移 start/end 记录，并处理 UTF-8 BOM 与缓冲区跨界读取。"
+    },
+    {
+      "id": "class:TextFile.kt:TextFile",
+      "type": "class",
+      "name": "TextFile",
+      "filePath": "TextFile.kt",
+      "lineRange": [
+        22,
+        479
+      ],
+      "summary": "TXT 文件解析实现，缓存 charset、tocUrl 与读取缓冲，提供目录生成（有规则/无规则两条路径）和按偏移量取正文。",
+      "tags": [
+        "txt",
+        "parser",
+        "buffer",
+        "singleton"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:TextFile.kt:getChapterList",
+      "type": "function",
+      "name": "getChapterList",
+      "filePath": "TextFile.kt",
+      "lineRange": [
+        77,
+        103
+      ],
+      "summary": "必要时用 EncodingDetect 重新探测编码、用 getTocRule 挑选目录规则，再调用 analyze 生成目录并回填字数、index、bookUrl 与 md5 章节 url。",
+      "tags": [
+        "toc",
+        "charset",
+        "txt"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:TextFile.kt:getContent",
+      "type": "function",
+      "name": "getContent",
+      "filePath": "TextFile.kt",
+      "lineRange": [
+        105,
+        141
+      ],
+      "summary": "按章节字节偏移从 8MB 缓冲取内容，跨缓冲区边界时重新打开文件读取，返回前去掉章节标题前缀并把行首空白替换为全角缩进。",
+      "tags": [
+        "content",
+        "buffer",
+        "txt"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:TextFile.kt:analyze",
+      "type": "function",
+      "name": "analyze",
+      "filePath": "TextFile.kt",
+      "lineRange": [
+        146,
+        431
+      ],
+      "summary": "两条分章路径：有目录规则时用正则逐块匹配章节标题并累计字节偏移；无规则时按 maxLengthWithNoToc 在换行处切块，生成“第N章(M)”式章节。",
+      "tags": [
+        "toc",
+        "regex",
+        "buffer"
+      ],
+      "complexity": "complex"
+    },
+    {
+      "id": "function:TextFile.kt:getTocRule",
+      "type": "function",
+      "name": "getTocRule",
+      "filePath": "TextFile.kt",
+      "lineRange": [
+        436,
+        462
+      ],
+      "summary": "遍历启用中的 txt 目录规则（后加的优先），选取命中次数最多者作为本书目录正则，语法错误只记日志不中断。",
+      "tags": [
+        "toc-rule",
+        "regex",
+        "detection"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:TextFile.kt:getTocRules",
+      "type": "function",
+      "name": "getTocRules",
+      "filePath": "TextFile.kt",
+      "lineRange": [
+        467,
+        477
+      ],
+      "summary": "读取启用的 TxtTocRule；数据库为空时先用 DefaultData 内置规则初始化再返回启用项。",
+      "tags": [
+        "toc-rule",
+        "database",
+        "default-data"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "file:UmdFile.kt",
+      "type": "file",
+      "name": "UmdFile.kt",
+      "filePath": "UmdFile.kt",
+      "summary": "UMD 解析器：用 UmdReader 读取 UmdBook，按 chapters 索引生成目录、取正文与封面，不提供图片能力。",
+      "tags": [
+        "umd",
+        "parser",
+        "local-book"
+      ],
+      "complexity": "moderate",
+      "languageNotes": "体积最小的解析实现，正文/目录都按章节索引直接向 UmdBook 查询，getImage 恒返回 null。"
+    },
+    {
+      "id": "class:UmdFile.kt:UmdFile",
+      "type": "class",
+      "name": "UmdFile",
+      "filePath": "UmdFile.kt",
+      "lineRange": [
+        13,
+        123
+      ],
+      "summary": "UMD 文件解析实现，懒加载 UmdBook 后提供信息回填、封面落盘、目录与正文读取。",
+      "tags": [
+        "umd",
+        "parser",
+        "singleton",
+        "local-book"
+      ],
+      "complexity": "moderate"
+    },
+    {
+      "id": "function:UmdFile.kt:upBookCover",
+      "type": "function",
+      "name": "upBookCover",
+      "filePath": "UmdFile.kt",
+      "lineRange": [
+        71,
+        85
+      ],
+      "summary": "把 UmdBook 的 coverData 字节写入 covers 目录，fastCheck 为真且封面已存在时跳过。",
+      "tags": [
+        "cover",
+        "umd",
+        "file"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:UmdFile.kt:upBookInfo",
+      "type": "function",
+      "name": "upBookInfo",
+      "filePath": "UmdFile.kt",
+      "lineRange": [
+        87,
+        98
+      ],
+      "summary": "用 header 的 title/author/bookType 回填书籍信息；UmdBook 为空则清缓存并标记“书籍导入异常”。",
+      "tags": [
+        "metadata",
+        "umd",
+        "book-info"
+      ],
+      "complexity": "simple"
+    },
+    {
+      "id": "function:UmdFile.kt:getChapterList",
+      "type": "function",
+      "name": "getChapterList",
+      "filePath": "UmdFile.kt",
+      "lineRange": [
+        104,
+        117
+      ],
+      "summary": "按 chapters.titles 逐个生成 BookChapter，url 记录章节索引，供正文按 index 回查。",
+      "tags": [
+        "toc",
+        "umd",
+        "content"
+      ],
+      "complexity": "simple"
+    }
+  ],
+  "edges": [
+    {
+      "source": "document:README.md",
+      "target": "file:BaseLocalBookParse.kt",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:LocalBook.kt",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:TextFile.kt",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:EpubFile.kt",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:PdfFile.kt",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "document:README.md",
+      "target": "file:UmdFile.kt",
+      "type": "documents",
+      "direction": "forward",
+      "weight": 0.5
+    },
+    {
+      "source": "file:BaseLocalBookParse.kt",
+      "target": "class:BaseLocalBookParse.kt:BaseLocalBookParse",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:BaseLocalBookParse.kt",
+      "target": "function:BaseLocalBookParse.kt:upBookInfo",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:BaseLocalBookParse.kt",
+      "target": "function:BaseLocalBookParse.kt:getChapterList",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:BaseLocalBookParse.kt",
+      "target": "function:BaseLocalBookParse.kt:getContent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:BaseLocalBookParse.kt",
+      "target": "function:BaseLocalBookParse.kt:getImage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:BaseLocalBookParse.kt",
+      "target": "class:BaseLocalBookParse.kt:BaseLocalBookParse",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:BaseLocalBookParse.kt",
+      "target": "function:BaseLocalBookParse.kt:upBookInfo",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:BaseLocalBookParse.kt",
+      "target": "function:BaseLocalBookParse.kt:getChapterList",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:BaseLocalBookParse.kt",
+      "target": "function:BaseLocalBookParse.kt:getContent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:BaseLocalBookParse.kt",
+      "target": "function:BaseLocalBookParse.kt:getImage",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:EpubFile.kt",
+      "target": "class:EpubFile.kt:EpubFile",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:EpubFile.kt",
+      "target": "function:EpubFile.kt:readEpub",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:EpubFile.kt",
+      "target": "function:EpubFile.kt:getContent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:EpubFile.kt",
+      "target": "function:EpubFile.kt:getBody",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:EpubFile.kt",
+      "target": "function:EpubFile.kt:upBookCover",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:EpubFile.kt",
+      "target": "function:EpubFile.kt:upBookInfo",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:EpubFile.kt",
+      "target": "function:EpubFile.kt:getChapterList",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:EpubFile.kt",
+      "target": "function:EpubFile.kt:parseFirstPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:EpubFile.kt",
+      "target": "function:EpubFile.kt:parseMenu",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:EpubFile.kt",
+      "target": "class:EpubFile.kt:EpubFile",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:EpubFile.kt:EpubFile",
+      "target": "class:BaseLocalBookParse.kt:BaseLocalBookParse",
+      "type": "implements",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "function:EpubFile.kt:upBookCover",
+      "target": "function:LocalBook.kt:getCoverPath",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:LocalBook.kt",
+      "target": "class:LocalBook.kt:LocalBook",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:LocalBook.kt",
+      "target": "function:LocalBook.kt:getBookInputStream",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:LocalBook.kt",
+      "target": "function:LocalBook.kt:getLastModified",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:LocalBook.kt",
+      "target": "function:LocalBook.kt:getChapterList",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:LocalBook.kt",
+      "target": "function:LocalBook.kt:getContent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:LocalBook.kt",
+      "target": "function:LocalBook.kt:getCoverPath",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:LocalBook.kt",
+      "target": "function:LocalBook.kt:importFileOnLine",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:LocalBook.kt",
+      "target": "function:LocalBook.kt:importFile",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:LocalBook.kt",
+      "target": "function:LocalBook.kt:upBookInfo",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:LocalBook.kt",
+      "target": "function:LocalBook.kt:importArchiveFile",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:LocalBook.kt",
+      "target": "function:LocalBook.kt:importFiles",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:LocalBook.kt",
+      "target": "function:LocalBook.kt:analyzeNameAuthor",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:LocalBook.kt",
+      "target": "function:LocalBook.kt:deleteBook",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:LocalBook.kt",
+      "target": "function:LocalBook.kt:saveBookFile",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:LocalBook.kt",
+      "target": "function:LocalBook.kt:mergeBook",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:LocalBook.kt",
+      "target": "function:LocalBook.kt:downloadRemoteBook",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:LocalBook.kt",
+      "target": "class:LocalBook.kt:LocalBook",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:LocalBook.kt",
+      "target": "function:LocalBook.kt:getBookInputStream",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:LocalBook.kt",
+      "target": "function:LocalBook.kt:getLastModified",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:LocalBook.kt",
+      "target": "function:LocalBook.kt:getChapterList",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:LocalBook.kt",
+      "target": "function:LocalBook.kt:getContent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:LocalBook.kt",
+      "target": "function:LocalBook.kt:getCoverPath",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:LocalBook.kt",
+      "target": "function:LocalBook.kt:importFileOnLine",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:LocalBook.kt",
+      "target": "function:LocalBook.kt:importFile",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:LocalBook.kt",
+      "target": "function:LocalBook.kt:upBookInfo",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:LocalBook.kt",
+      "target": "function:LocalBook.kt:importArchiveFile",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:LocalBook.kt",
+      "target": "function:LocalBook.kt:importFiles",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:LocalBook.kt",
+      "target": "function:LocalBook.kt:deleteBook",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:LocalBook.kt",
+      "target": "function:LocalBook.kt:saveBookFile",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:LocalBook.kt",
+      "target": "function:LocalBook.kt:mergeBook",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:LocalBook.kt:getChapterList",
+      "target": "function:EpubFile.kt:getChapterList",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:LocalBook.kt:getChapterList",
+      "target": "function:MobiFile.kt:getChapterList",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:LocalBook.kt:getChapterList",
+      "target": "function:PdfFile.kt:getChapterList",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:LocalBook.kt:getChapterList",
+      "target": "function:TextFile.kt:getChapterList",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:LocalBook.kt:getChapterList",
+      "target": "function:UmdFile.kt:getChapterList",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:LocalBook.kt:getContent",
+      "target": "function:EpubFile.kt:getContent",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:LocalBook.kt:getContent",
+      "target": "function:MobiFile.kt:getContent",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:LocalBook.kt:getContent",
+      "target": "function:PdfFile.kt:getContent",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:LocalBook.kt:getContent",
+      "target": "function:TextFile.kt:getContent",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:LocalBook.kt:upBookInfo",
+      "target": "function:EpubFile.kt:upBookInfo",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:LocalBook.kt:upBookInfo",
+      "target": "function:MobiFile.kt:upBookInfo",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:LocalBook.kt:upBookInfo",
+      "target": "function:PdfFile.kt:upBookInfo",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:LocalBook.kt:upBookInfo",
+      "target": "function:UmdFile.kt:upBookInfo",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:MobiFile.kt",
+      "target": "class:MobiFile.kt:MobiFile",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:MobiFile.kt",
+      "target": "function:MobiFile.kt:readMobi",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:MobiFile.kt",
+      "target": "function:MobiFile.kt:getChapterList",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:MobiFile.kt",
+      "target": "function:MobiFile.kt:getChapterListKF6",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:MobiFile.kt",
+      "target": "function:MobiFile.kt:getChapterListKF8",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:MobiFile.kt",
+      "target": "function:MobiFile.kt:getContent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:MobiFile.kt",
+      "target": "function:MobiFile.kt:getContentKF6",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:MobiFile.kt",
+      "target": "function:MobiFile.kt:getContentKF8",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:MobiFile.kt",
+      "target": "function:MobiFile.kt:upBookCover",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:MobiFile.kt",
+      "target": "function:MobiFile.kt:upBookInfo",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:MobiFile.kt",
+      "target": "class:MobiFile.kt:MobiFile",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:MobiFile.kt:MobiFile",
+      "target": "class:BaseLocalBookParse.kt:BaseLocalBookParse",
+      "type": "implements",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "function:MobiFile.kt:upBookCover",
+      "target": "function:LocalBook.kt:getCoverPath",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:PdfFile.kt",
+      "target": "class:PdfFile.kt:PdfFile",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:PdfFile.kt",
+      "target": "function:PdfFile.kt:readPdf",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:PdfFile.kt",
+      "target": "function:PdfFile.kt:openPdfPage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:PdfFile.kt",
+      "target": "function:PdfFile.kt:getContent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:PdfFile.kt",
+      "target": "function:PdfFile.kt:getImage",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:PdfFile.kt",
+      "target": "function:PdfFile.kt:getChapterList",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:PdfFile.kt",
+      "target": "function:PdfFile.kt:upBookCover",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:PdfFile.kt",
+      "target": "function:PdfFile.kt:upBookInfo",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:PdfFile.kt",
+      "target": "class:PdfFile.kt:PdfFile",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:PdfFile.kt:PdfFile",
+      "target": "class:BaseLocalBookParse.kt:BaseLocalBookParse",
+      "type": "implements",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "function:PdfFile.kt:upBookCover",
+      "target": "function:LocalBook.kt:getCoverPath",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:TextFile.kt",
+      "target": "class:TextFile.kt:TextFile",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:TextFile.kt",
+      "target": "function:TextFile.kt:getChapterList",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:TextFile.kt",
+      "target": "function:TextFile.kt:getContent",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:TextFile.kt",
+      "target": "function:TextFile.kt:analyze",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:TextFile.kt",
+      "target": "function:TextFile.kt:getTocRule",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:TextFile.kt",
+      "target": "function:TextFile.kt:getTocRules",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:TextFile.kt",
+      "target": "class:TextFile.kt:TextFile",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:TextFile.kt",
+      "target": "function:TextFile.kt:getChapterList",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:TextFile.kt",
+      "target": "function:TextFile.kt:getContent",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:TextFile.kt:getChapterList",
+      "target": "function:LocalBook.kt:getBookInputStream",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "function:TextFile.kt:getContent",
+      "target": "function:LocalBook.kt:getBookInputStream",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "file:UmdFile.kt",
+      "target": "class:UmdFile.kt:UmdFile",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:UmdFile.kt",
+      "target": "function:UmdFile.kt:upBookCover",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:UmdFile.kt",
+      "target": "function:UmdFile.kt:upBookInfo",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:UmdFile.kt",
+      "target": "function:UmdFile.kt:getChapterList",
+      "type": "contains",
+      "direction": "forward",
+      "weight": 1
+    },
+    {
+      "source": "file:UmdFile.kt",
+      "target": "class:UmdFile.kt:UmdFile",
+      "type": "exports",
+      "direction": "forward",
+      "weight": 0.8
+    },
+    {
+      "source": "class:UmdFile.kt:UmdFile",
+      "target": "class:BaseLocalBookParse.kt:BaseLocalBookParse",
+      "type": "implements",
+      "direction": "forward",
+      "weight": 0.9
+    },
+    {
+      "source": "function:UmdFile.kt:upBookCover",
+      "target": "function:LocalBook.kt:getCoverPath",
+      "type": "calls",
+      "direction": "forward",
+      "weight": 0.8
+    }
+  ],
+  "layers": [
+    {
+      "id": "layer:parser-contract-and-implementations",
+      "name": "解析器契约与格式实现",
+      "description": "本地书籍解析的核心抽象与各格式实现：BaseLocalBookParse 定义 upBookInfo、getChapterList、getContent、getImage 四个契约方法；EpubFile、MobiFile、PdfFile、TextFile、UmdFile 以 companion object 单例实现该契约，分别用 epublib/epub NCX 目录、MobiReader 的 KF6/KF8 分支、PdfRenderer 逐页渲染、TXT 正则分章与字节偏移读取、UmdReader 章节索引来完成元数据、目录、正文与图片/封面能力。",
+      "nodeIds": [
+        "file:BaseLocalBookParse.kt",
+        "file:EpubFile.kt",
+        "file:MobiFile.kt",
+        "file:PdfFile.kt",
+        "file:TextFile.kt",
+        "file:UmdFile.kt"
+      ]
+    },
+    {
+      "id": "layer:import-and-dispatch-facade",
+      "name": "导入与分发门面",
+      "description": "LocalBook 单例作为模块唯一对外入口：按书籍类型（isEpub/isMobi/isPdf/isUmd，其余回退 TextFile）把取目录、取正文、回填书籍信息分发到各解析器；同时承担文件落盘与导入编排，包括本地 Uri 导入、压缩包批量解压导入、在线 URL 与 WebDAV 下载、文件名解析书名作者、封面路径生成、缓存与源文件删除，以及在线书籍信息合并。",
+      "nodeIds": [
+        "file:LocalBook.kt"
+      ]
+    },
+    {
+      "id": "layer:documentation",
+      "name": "文档",
+      "description": "模块的中文速查说明，逐条列出解析接口、导入总入口与 txt/epub/pdf/umd 各解析器职责，作为理解本模块边界与格式覆盖范围的入口指引。",
+      "nodeIds": [
+        "document:README.md"
+      ]
+    }
+  ],
+  "tour": [
+    {
+      "order": 1,
+      "title": "模块总览：本地电子书解析与导入",
+      "description": "这个包是 Legado 的本地电子书接入层：把用户设备上的 txt / epub / umd / pdf / mobi 文件转换成统一的 Book 与 BookChapter 模型，并负责文件落盘、书名作者解析与入库。README.md 是模块的中文速查表，逐条列出解析接口、导入总入口以及各格式解析器的职责。先读它建立边界认知：本层只做「文件 → 书籍结构」的转换，阅读界面、书源与书架逻辑都在其外。",
+      "nodeIds": [
+        "document:README.md"
+      ]
+    },
+    {
+      "order": 2,
+      "title": "解析器契约：BaseLocalBookParse 的四个方法",
+      "description": "BaseLocalBookParse 是一个纯 interface，只定义四个契约方法：upBookInfo(book: Book)、getChapterList(book: Book): ArrayList<BookChapter>、getContent(book: Book, chapter: BookChapter): String?、getImage(book: Book, href: String): InputStream?。因为接口没有可供实现类继承的状态，各格式统一用 companion object 实现它（源码注释直接写着 companion object interface，并指向 EpubFile.kt），于是解析器都是无状态单例，可被门面直接静态调用。这个接口就是「新增一种格式需要满足的最小面」，也是理解后面所有实现类的钥匙。",
+      "nodeIds": [
+        "file:BaseLocalBookParse.kt"
+      ]
+    },
+    {
+      "order": 3,
+      "title": "门面 LocalBook：按格式分发与导入编排",
+      "description": "LocalBook 是 object 单例，也是模块唯一的对外入口。取目录 getChapterList、取正文 getContent、回填书籍信息 upBookInfo 都用 when 链按 book.isEpub / isUmd / isPdf / isMobi 分发到对应解析器的 companion object，其余一律回退 TextFile；getChapterList 在返回前还会去重、重编号并补全无标题章节与最新章节信息，getContent 在 epub 分支额外做 HTML 实体反转义。导入侧由 importFile 处理单个 Uri（落盘 saveBookFile、文件名解析 analyzeNameAuthor），importFiles 处理批量与压缩包（importArchiveFile），importFileOnLine 与 downloadRemoteBook 覆盖在线下载，getBookInputStream 统一提供文件流，getCoverPath 生成封面缓存路径。",
+      "nodeIds": [
+        "file:LocalBook.kt"
+      ]
+    },
+    {
+      "order": 4,
+      "title": "字节流格式：TextFile 与 PdfFile",
+      "description": "TextFile 面向纯文本：analyze 探测编码与目录规则，getTocRule / getTocRules 用正则匹配章节标题，getChapterList 只记录每章的字节偏移而不切分全文，getContent 再按偏移通过 LocalBook.getBookInputStream 定位读取，因此超大 txt 也能快速打开。PdfFile 面向纯图片型 PDF：readPdf 打开文档，openPdfPage 用 PdfRenderer 逐页渲染，getChapterList 直接以页为章，getImage 返回页面位图流，所以它没有可抽取的文字层，正文本质上是一张张图片。",
+      "nodeIds": [
+        "file:TextFile.kt",
+        "file:PdfFile.kt"
+      ]
+    },
+    {
+      "order": 5,
+      "title": "容器格式与扩展点：EpubFile / MobiFile / UmdFile",
+      "description": "EpubFile 借助 epublib 解析容器，parseMenu 读 NCX 目录、parseFirstPage 兜底无目录情形、getBody 清理正文，upBookCover 调用 LocalBook.getCoverPath 落地封面。MobiFile 借助 MobiReader，按 KF6 / KF8 两代格式分别实现 getChapterListKF6/KF8 与 getContentKF6/KF8。UmdFile 依赖 UmdReader 的章节索引，只实现元数据、封面与目录三件事。扩展点也在这里收口：新增格式需要实现 BaseLocalBookParse 的四个方法、在 LocalBook 的三处 when 链注册分发、在 io.legado.app.help.book.BookExtensions 增加按 originName 后缀判定的 isXxx 属性（现有 isEpub/isUmd/isPdf/isMobi 就定义在那里，Mobi 还顺带覆盖 .azw/.azw3），必要时补 BookType 常量，最后更新 README.md 速查表。",
+      "nodeIds": [
+        "file:EpubFile.kt",
+        "file:MobiFile.kt",
+        "file:UmdFile.kt"
+      ]
+    }
+  ]
+}

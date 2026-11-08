@@ -1,0 +1,69 @@
+{
+  "scriptCompleted": true,
+  "contentDigest": "91e1c4b119508777a321cab51734325d5b1f16e4e1a8567d0cc98bf434f9fd93",
+  "files": [
+    {
+      "path": "BaseLocalBookParse.kt",
+      "language": "kotlin",
+      "sizeLines": 21,
+      "fileCategory": "code"
+    },
+    {
+      "path": "EpubFile.kt",
+      "language": "kotlin",
+      "sizeLines": 438,
+      "fileCategory": "code"
+    },
+    {
+      "path": "LocalBook.kt",
+      "language": "kotlin",
+      "sizeLines": 525,
+      "fileCategory": "code"
+    },
+    {
+      "path": "MobiFile.kt",
+      "language": "kotlin",
+      "sizeLines": 318,
+      "fileCategory": "code"
+    },
+    {
+      "path": "PdfFile.kt",
+      "language": "kotlin",
+      "sizeLines": 229,
+      "fileCategory": "code"
+    },
+    {
+      "path": "README.md",
+      "language": "markdown",
+      "sizeLines": 7,
+      "fileCategory": "docs"
+    },
+    {
+      "path": "TextFile.kt",
+      "language": "kotlin",
+      "sizeLines": 478,
+      "fileCategory": "code"
+    },
+    {
+      "path": "UmdFile.kt",
+      "language": "kotlin",
+      "sizeLines": 122,
+      "fileCategory": "code"
+    }
+  ],
+  "totalFiles": 8,
+  "filteredByIgnore": 0,
+  "estimatedComplexity": "small",
+  "failures": [],
+  "stats": {
+    "filesScanned": 8,
+    "byCategory": {
+      "code": 7,
+      "docs": 1
+    },
+    "byLanguage": {
+      "kotlin": 7,
+      "markdown": 1
+    }
+  }
+}

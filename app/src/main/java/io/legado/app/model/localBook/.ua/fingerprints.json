@@ -1,0 +1,1818 @@
+{
+  "version": "1.0.0",
+  "gitCommitHash": "cbc8273c5381195960fde40d4bd4ad6e8a1342a1",
+  "generatedAt": "2026-11-08T08:06:00.036Z",
+  "files": {
+    "BaseLocalBookParse.kt": {
+      "filePath": "BaseLocalBookParse.kt",
+      "contentHash": "08218ec1fa211bdc92019fcdcbab779c0aebed64d5a79140e5cde2d83c39d8f2",
+      "functions": [
+        {
+          "name": "upBookInfo",
+          "params": [
+            "book"
+          ],
+          "exported": true,
+          "lineCount": 1
+        },
+        {
+          "name": "getChapterList",
+          "params": [
+            "book"
+          ],
+          "returnType": "ArrayList<BookChapter>",
+          "exported": true,
+          "lineCount": 1
+        },
+        {
+          "name": "getContent",
+          "params": [
+            "book",
+            "chapter"
+          ],
+          "returnType": "String?",
+          "exported": true,
+          "lineCount": 1
+        },
+        {
+          "name": "getImage",
+          "params": [
+            "book",
+            "href"
+          ],
+          "returnType": "InputStream?",
+          "exported": true,
+          "lineCount": 1
+        }
+      ],
+      "classes": [
+        {
+          "name": "BaseLocalBookParse",
+          "methods": [
+            "upBookInfo",
+            "getChapterList",
+            "getContent",
+            "getImage"
+          ],
+          "properties": [],
+          "exported": true,
+          "lineCount": 11
+        }
+      ],
+      "imports": [
+        {
+          "source": "io.legado.app.data.entities.Book",
+          "specifiers": [
+            "Book"
+          ]
+        },
+        {
+          "source": "io.legado.app.data.entities.BookChapter",
+          "specifiers": [
+            "BookChapter"
+          ]
+        },
+        {
+          "source": "java.io.InputStream",
+          "specifiers": [
+            "InputStream"
+          ]
+        }
+      ],
+      "exports": [
+        "upBookInfo",
+        "getChapterList",
+        "getContent",
+        "getImage",
+        "BaseLocalBookParse"
+      ],
+      "totalLines": 22,
+      "hasStructuralAnalysis": true
+    },
+    "EpubFile.kt": {
+      "filePath": "EpubFile.kt",
+      "contentHash": "d8b9ff50490fac61e62be2f1998bafbf183c122b70dfcd78386be086af981e3a",
+      "functions": [
+        {
+          "name": "readEpub",
+          "params": [],
+          "returnType": "EpubBook?",
+          "exported": false,
+          "lineCount": 16
+        },
+        {
+          "name": "getContent",
+          "params": [
+            "chapter"
+          ],
+          "returnType": "String?",
+          "exported": false,
+          "lineCount": 58
+        },
+        {
+          "name": "getBody",
+          "params": [
+            "res",
+            "startFragmentId",
+            "endFragmentId"
+          ],
+          "returnType": "Element",
+          "exported": false,
+          "lineCount": 69
+        },
+        {
+          "name": "getImage",
+          "params": [
+            "href"
+          ],
+          "returnType": "InputStream?",
+          "exported": false,
+          "lineCount": 5
+        },
+        {
+          "name": "upBookCover",
+          "params": [
+            "fastCheck"
+          ],
+          "exported": false,
+          "lineCount": 23
+        },
+        {
+          "name": "upBookInfo",
+          "params": [],
+          "exported": false,
+          "lineCount": 27
+        },
+        {
+          "name": "getChapterList",
+          "params": [],
+          "returnType": "ArrayList<BookChapter>",
+          "exported": false,
+          "lineCount": 47
+        },
+        {
+          "name": "parseFirstPage",
+          "params": [
+            "chapterList",
+            "refs"
+          ],
+          "exported": false,
+          "lineCount": 47
+        },
+        {
+          "name": "parseMenu",
+          "params": [
+            "chapterList",
+            "refs",
+            "level"
+          ],
+          "exported": false,
+          "lineCount": 23
+        },
+        {
+          "name": "finalize",
+          "params": [],
+          "exported": true,
+          "lineCount": 3
+        }
+      ],
+      "classes": [
+        {
+          "name": "EpubFile",
+          "methods": [
+            "readEpub",
+            "getContent",
+            "getBody",
+            "getImage",
+            "upBookCover",
+            "upBookInfo",
+            "getChapterList",
+            "parseFirstPage",
+            "parseMenu",
+            "finalize"
+          ],
+          "properties": [
+            "book",
+            "mCharset",
+            "fileDescriptor",
+            "epubBook",
+            "epubBookContents",
+            "durIndex"
+          ],
+          "exported": true,
+          "lineCount": 406
+        }
+      ],
+      "imports": [
+        {
+          "source": "android.graphics.Bitmap",
+          "specifiers": [
+            "Bitmap"
+          ]
+        },
+        {
+          "source": "android.graphics.BitmapFactory",
+          "specifiers": [
+            "BitmapFactory"
+          ]
+        },
+        {
+          "source": "android.os.ParcelFileDescriptor",
+          "specifiers": [
+            "ParcelFileDescriptor"
+          ]
+        },
+        {
+          "source": "android.text.TextUtils",
+          "specifiers": [
+            "TextUtils"
+          ]
+        },
+        {
+          "source": "io.legado.app.constant.AppLog",
+          "specifiers": [
+            "AppLog"
+          ]
+        },
+        {
+          "source": "io.legado.app.data.entities.Book",
+          "specifiers": [
+            "Book"
+          ]
+        },
+        {
+          "source": "io.legado.app.data.entities.BookChapter",
+          "specifiers": [
+            "BookChapter"
+          ]
+        },
+        {
+          "source": "io.legado.app.help.book.BookHelp",
+          "specifiers": [
+            "BookHelp"
+          ]
+        },
+        {
+          "source": "io.legado.app.utils.FileUtils",
+          "specifiers": [
+            "FileUtils"
+          ]
+        },
+        {
+          "source": "io.legado.app.utils.HtmlFormatter",
+          "specifiers": [
+            "HtmlFormatter"
+          ]
+        },
+        {
+          "source": "io.legado.app.utils.encodeURI",
+          "specifiers": [
+            "encodeURI"
+          ]
+        },
+        {
+          "source": "io.legado.app.utils.isXml",
+          "specifiers": [
+            "isXml"
+          ]
+        },
+        {
+          "source": "io.legado.app.utils.printOnDebug",
+          "specifiers": [
+            "printOnDebug"
+          ]
+        },
+        {
+          "source": "me.ag2s.epublib.domain.EpubBook",
+          "specifiers": [
+            "EpubBook"
+          ]
+        },
+        {
+          "source": "me.ag2s.epublib.domain.Resource",
+          "specifiers": [
+            "Resource"
+          ]
+        },
+        {
+          "source": "me.ag2s.epublib.domain.TOCReference",
+          "specifiers": [
+            "TOCReference"
+          ]
+        },
+        {
+          "source": "me.ag2s.epublib.epub.EpubReader",
+          "specifiers": [
+            "EpubReader"
+          ]
+        },
+        {
+          "source": "me.ag2s.epublib.util.zip.AndroidZipFile",
+          "specifiers": [
+            "AndroidZipFile"
+          ]
+        },
+        {
+          "source": "org.jsoup.Jsoup",
+          "specifiers": [
+            "Jsoup"
+          ]
+        },
+        {
+          "source": "org.jsoup.nodes.Element",
+          "specifiers": [
+            "Element"
+          ]
+        },
+        {
+          "source": "org.jsoup.parser.Parser",
+          "specifiers": [
+            "Parser"
+          ]
+        },
+        {
+          "source": "org.jsoup.select.Elements",
+          "specifiers": [
+            "Elements"
+          ]
+        },
+        {
+          "source": "java.io.File",
+          "specifiers": [
+            "File"
+          ]
+        },
+        {
+          "source": "java.io.FileOutputStream",
+          "specifiers": [
+            "FileOutputStream"
+          ]
+        },
+        {
+          "source": "java.io.IOException",
+          "specifiers": [
+            "IOException"
+          ]
+        },
+        {
+          "source": "java.io.InputStream",
+          "specifiers": [
+            "InputStream"
+          ]
+        },
+        {
+          "source": "java.net.URI",
+          "specifiers": [
+            "URI"
+          ]
+        },
+        {
+          "source": "java.net.URLDecoder",
+          "specifiers": [
+            "URLDecoder"
+          ]
+        },
+        {
+          "source": "java.nio.charset.Charset",
+          "specifiers": [
+            "Charset"
+          ]
+        }
+      ],
+      "exports": [
+        "finalize",
+        "EpubFile"
+      ],
+      "totalLines": 439,
+      "hasStructuralAnalysis": true
+    },
+    "LocalBook.kt": {
+      "filePath": "LocalBook.kt",
+      "contentHash": "71897e38878beb56c029b8d47da26d45f101633a8309c2f49fe49ce2f44ad521",
+      "functions": [
+        {
+          "name": "getBookInputStream",
+          "params": [
+            "book"
+          ],
+          "returnType": "InputStream",
+          "exported": true,
+          "lineCount": 26
+        },
+        {
+          "name": "getLastModified",
+          "params": [
+            "book"
+          ],
+          "returnType": "Result<Long>",
+          "exported": true,
+          "lineCount": 13
+        },
+        {
+          "name": "getChapterList",
+          "params": [
+            "book"
+          ],
+          "returnType": "ArrayList<BookChapter>",
+          "exported": true,
+          "lineCount": 43
+        },
+        {
+          "name": "getContent",
+          "params": [
+            "book",
+            "chapter"
+          ],
+          "returnType": "String?",
+          "exported": true,
+          "lineCount": 42
+        },
+        {
+          "name": "getCoverPath",
+          "params": [
+            "book"
+          ],
+          "returnType": "String",
+          "exported": true,
+          "lineCount": 3
+        },
+        {
+          "name": "getCoverPath",
+          "params": [
+            "bookUrl"
+          ],
+          "returnType": "String",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "importFileOnLine",
+          "params": [
+            "str",
+            "fileName",
+            "source"
+          ],
+          "returnType": "Book",
+          "exported": true,
+          "lineCount": 7
+        },
+        {
+          "name": "importFile",
+          "params": [
+            "uri",
+            "groupId"
+          ],
+          "returnType": "Book",
+          "exported": true,
+          "lineCount": 35
+        },
+        {
+          "name": "upBookInfo",
+          "params": [
+            "book"
+          ],
+          "exported": true,
+          "lineCount": 8
+        },
+        {
+          "name": "importArchiveFile",
+          "params": [
+            "archiveFileUri",
+            "saveFileName",
+            "filter"
+          ],
+          "returnType": "List<Book>",
+          "exported": true,
+          "lineCount": 21
+        },
+        {
+          "name": "importFiles",
+          "params": [
+            "uri"
+          ],
+          "returnType": "List<Book>",
+          "exported": true,
+          "lineCount": 14
+        },
+        {
+          "name": "importFiles",
+          "params": [
+            "uris",
+            "groupOf"
+          ],
+          "exported": true,
+          "lineCount": 25
+        },
+        {
+          "name": "analyzeNameAuthor",
+          "params": [
+            "fileName"
+          ],
+          "returnType": "Pair<String, String>",
+          "exported": false,
+          "lineCount": 39
+        },
+        {
+          "name": "deleteBook",
+          "params": [
+            "book",
+            "deleteOriginal"
+          ],
+          "exported": true,
+          "lineCount": 16
+        },
+        {
+          "name": "saveBookFile",
+          "params": [
+            "str",
+            "fileName",
+            "source"
+          ],
+          "returnType": "Uri",
+          "exported": true,
+          "lineCount": 24
+        },
+        {
+          "name": "saveBookFile",
+          "params": [
+            "inputStream",
+            "fileName"
+          ],
+          "returnType": "Uri",
+          "exported": true,
+          "lineCount": 36
+        },
+        {
+          "name": "isOnBookShelf",
+          "params": [
+            "fileName"
+          ],
+          "returnType": "Boolean",
+          "exported": true,
+          "lineCount": 5
+        },
+        {
+          "name": "mergeBook",
+          "params": [
+            "localBook",
+            "onLineBook"
+          ],
+          "returnType": "Book",
+          "exported": true,
+          "lineCount": 10
+        },
+        {
+          "name": "downloadRemoteBook",
+          "params": [
+            "localBook"
+          ],
+          "returnType": "Boolean",
+          "exported": false,
+          "lineCount": 39
+        }
+      ],
+      "classes": [
+        {
+          "name": "LocalBook",
+          "methods": [
+            "getBookInputStream",
+            "getLastModified",
+            "getChapterList",
+            "getContent",
+            "getCoverPath",
+            "getCoverPath",
+            "importFileOnLine",
+            "importFile",
+            "upBookInfo",
+            "importArchiveFile",
+            "importFiles",
+            "importFiles",
+            "analyzeNameAuthor",
+            "deleteBook",
+            "saveBookFile",
+            "saveBookFile",
+            "isOnBookShelf",
+            "mergeBook",
+            "downloadRemoteBook"
+          ],
+          "properties": [
+            "nameAuthorPatterns"
+          ],
+          "exported": true,
+          "lineCount": 458
+        }
+      ],
+      "imports": [
+        {
+          "source": "android.net.Uri",
+          "specifiers": [
+            "Uri"
+          ]
+        },
+        {
+          "source": "android.util.Base64",
+          "specifiers": [
+            "Base64"
+          ]
+        },
+        {
+          "source": "androidx.documentfile.provider.DocumentFile",
+          "specifiers": [
+            "DocumentFile"
+          ]
+        },
+        {
+          "source": "com.script.ScriptBindings",
+          "specifiers": [
+            "ScriptBindings"
+          ]
+        },
+        {
+          "source": "com.script.rhino.RhinoScriptEngine",
+          "specifiers": [
+            "RhinoScriptEngine"
+          ]
+        },
+        {
+          "source": "io.legado.app.R",
+          "specifiers": [
+            "R"
+          ]
+        },
+        {
+          "source": "io.legado.app.constant.AppLog",
+          "specifiers": [
+            "AppLog"
+          ]
+        },
+        {
+          "source": "io.legado.app.constant.AppPattern",
+          "specifiers": [
+            "AppPattern"
+          ]
+        },
+        {
+          "source": "io.legado.app.constant.BookType",
+          "specifiers": [
+            "BookType"
+          ]
+        },
+        {
+          "source": "io.legado.app.data.appDb",
+          "specifiers": [
+            "appDb"
+          ]
+        },
+        {
+          "source": "io.legado.app.data.entities.BaseSource",
+          "specifiers": [
+            "BaseSource"
+          ]
+        },
+        {
+          "source": "io.legado.app.data.entities.Book",
+          "specifiers": [
+            "Book"
+          ]
+        },
+        {
+          "source": "io.legado.app.data.entities.BookChapter",
+          "specifiers": [
+            "BookChapter"
+          ]
+        },
+        {
+          "source": "io.legado.app.exception.EmptyFileException",
+          "specifiers": [
+            "EmptyFileException"
+          ]
+        },
+        {
+          "source": "io.legado.app.exception.NoBooksDirException",
+          "specifiers": [
+            "NoBooksDirException"
+          ]
+        },
+        {
+          "source": "io.legado.app.exception.NoStackTraceException",
+          "specifiers": [
+            "NoStackTraceException"
+          ]
+        },
+        {
+          "source": "io.legado.app.exception.TocEmptyException",
+          "specifiers": [
+            "TocEmptyException"
+          ]
+        },
+        {
+          "source": "io.legado.app.help.AppWebDav",
+          "specifiers": [
+            "AppWebDav"
+          ]
+        },
+        {
+          "source": "io.legado.app.help.book.BookHelp",
+          "specifiers": [
+            "BookHelp"
+          ]
+        },
+        {
+          "source": "io.legado.app.help.book.ContentProcessor",
+          "specifiers": [
+            "ContentProcessor"
+          ]
+        },
+        {
+          "source": "io.legado.app.help.book.addType",
+          "specifiers": [
+            "addType"
+          ]
+        },
+        {
+          "source": "io.legado.app.help.book.archiveName",
+          "specifiers": [
+            "archiveName"
+          ]
+        },
+        {
+          "source": "io.legado.app.help.book.getArchiveUri",
+          "specifiers": [
+            "getArchiveUri"
+          ]
+        },
+        {
+          "source": "io.legado.app.help.book.getLocalUri",
+          "specifiers": [
+            "getLocalUri"
+          ]
+        },
+        {
+          "source": "io.legado.app.help.book.getRemoteUrl",
+          "specifiers": [
+            "getRemoteUrl"
+          ]
+        },
+        {
+          "source": "io.legado.app.help.book.isArchive",
+          "specifiers": [
+            "isArchive"
+          ]
+        },
+        {
+          "source": "io.legado.app.help.book.isEpub",
+          "specifiers": [
+            "isEpub"
+          ]
+        },
+        {
+          "source": "io.legado.app.help.book.isMobi",
+          "specifiers": [
+            "isMobi"
+          ]
+        },
+        {
+          "source": "io.legado.app.help.book.isPdf",
+          "specifiers": [
+            "isPdf"
+          ]
+        },
+        {
+          "source": "io.legado.app.help.book.isUmd",
+          "specifiers": [
+            "isUmd"
+          ]
+        },
+        {
+          "source": "io.legado.app.help.book.removeLocalUriCache",
+          "specifiers": [
+            "removeLocalUriCache"
+          ]
+        },
+        {
+          "source": "io.legado.app.help.book.simulatedTotalChapterNum",
+          "specifiers": [
+            "simulatedTotalChapterNum"
+          ]
+        },
+        {
+          "source": "io.legado.app.help.config.AppConfig",
+          "specifiers": [
+            "AppConfig"
+          ]
+        },
+        {
+          "source": "io.legado.app.lib.webdav.WebDav",
+          "specifiers": [
+            "WebDav"
+          ]
+        },
+        {
+          "source": "io.legado.app.lib.webdav.WebDavException",
+          "specifiers": [
+            "WebDavException"
+          ]
+        },
+        {
+          "source": "io.legado.app.model.analyzeRule.AnalyzeUrl",
+          "specifiers": [
+            "AnalyzeUrl"
+          ]
+        },
+        {
+          "source": "io.legado.app.utils.ArchiveUtils",
+          "specifiers": [
+            "ArchiveUtils"
+          ]
+        },
+        {
+          "source": "io.legado.app.utils.FileDoc",
+          "specifiers": [
+            "FileDoc"
+          ]
+        },
+        {
+          "source": "io.legado.app.utils.FileUtils",
+          "specifiers": [
+            "FileUtils"
+          ]
+        },
+        {
+          "source": "io.legado.app.utils.GSON",
+          "specifiers": [
+            "GSON"
+          ]
+        },
+        {
+          "source": "io.legado.app.utils.MD5Utils",
+          "specifiers": [
+            "MD5Utils"
+          ]
+        },
+        {
+          "source": "io.legado.app.utils.externalFiles",
+          "specifiers": [
+            "externalFiles"
+          ]
+        },
+        {
+          "source": "io.legado.app.utils.fromJsonObject",
+          "specifiers": [
+            "fromJsonObject"
+          ]
+        },
+        {
+          "source": "io.legado.app.utils.getFile",
+          "specifiers": [
+            "getFile"
+          ]
+        },
+        {
+          "source": "io.legado.app.utils.inputStream",
+          "specifiers": [
+            "inputStream"
+          ]
+        },
+        {
+          "source": "io.legado.app.utils.isAbsUrl",
+          "specifiers": [
+            "isAbsUrl"
+          ]
+        },
+        {
+          "source": "io.legado.app.utils.isContentScheme",
+          "specifiers": [
+            "isContentScheme"
+          ]
+        },
+        {
+          "source": "io.legado.app.utils.isDataUrl",
+          "specifiers": [
+            "isDataUrl"
+          ]
+        },
+        {
+          "source": "io.legado.app.utils.printOnDebug",
+          "specifiers": [
+            "printOnDebug"
+          ]
+        },
+        {
+          "source": "kotlinx.coroutines.runBlocking",
+          "specifiers": [
+            "runBlocking"
+          ]
+        },
+        {
+          "source": "org.apache.commons.text.StringEscapeUtils",
+          "specifiers": [
+            "StringEscapeUtils"
+          ]
+        },
+        {
+          "source": "splitties.init.appCtx",
+          "specifiers": [
+            "appCtx"
+          ]
+        },
+        {
+          "source": "java.io.ByteArrayInputStream",
+          "specifiers": [
+            "ByteArrayInputStream"
+          ]
+        },
+        {
+          "source": "java.io.File",
+          "specifiers": [
+            "File"
+          ]
+        },
+        {
+          "source": "java.io.FileInputStream",
+          "specifiers": [
+            "FileInputStream"
+          ]
+        },
+        {
+          "source": "java.io.FileNotFoundException",
+          "specifiers": [
+            "FileNotFoundException"
+          ]
+        },
+        {
+          "source": "java.io.FileOutputStream",
+          "specifiers": [
+            "FileOutputStream"
+          ]
+        },
+        {
+          "source": "java.io.InputStream",
+          "specifiers": [
+            "InputStream"
+          ]
+        },
+        {
+          "source": "java.util.regex.Pattern",
+          "specifiers": [
+            "Pattern"
+          ]
+        },
+        {
+          "source": "kotlin.coroutines.coroutineContext",
+          "specifiers": [
+            "coroutineContext"
+          ]
+        }
+      ],
+      "exports": [
+        "getBookInputStream",
+        "getLastModified",
+        "getChapterList",
+        "getContent",
+        "getCoverPath",
+        "importFileOnLine",
+        "importFile",
+        "upBookInfo",
+        "importArchiveFile",
+        "importFiles",
+        "importFiles",
+        "deleteBook",
+        "saveBookFile",
+        "saveBookFile",
+        "isOnBookShelf",
+        "mergeBook",
+        "LocalBook"
+      ],
+      "totalLines": 526,
+      "hasStructuralAnalysis": true
+    },
+    "MobiFile.kt": {
+      "filePath": "MobiFile.kt",
+      "contentHash": "045c7edb3fc0e46e42a4616f829d79cba2107556f7af0f48450f815df066c2c6",
+      "functions": [
+        {
+          "name": "readMobi",
+          "params": [],
+          "returnType": "MobiBook?",
+          "exported": false,
+          "lineCount": 11
+        },
+        {
+          "name": "getChapterList",
+          "params": [],
+          "returnType": "ArrayList<BookChapter>",
+          "exported": false,
+          "lineCount": 7
+        },
+        {
+          "name": "getChapterListKF6",
+          "params": [
+            "kF6Book"
+          ],
+          "returnType": "ArrayList<BookChapter>",
+          "exported": false,
+          "lineCount": 40
+        },
+        {
+          "name": "getChapterListKF8",
+          "params": [
+            "kf8Book"
+          ],
+          "returnType": "ArrayList<BookChapter>",
+          "exported": false,
+          "lineCount": 40
+        },
+        {
+          "name": "getContent",
+          "params": [
+            "chapter"
+          ],
+          "returnType": "String?",
+          "exported": false,
+          "lineCount": 7
+        },
+        {
+          "name": "getContentKF6",
+          "params": [
+            "kf6Book",
+            "chapter"
+          ],
+          "returnType": "String?",
+          "exported": false,
+          "lineCount": 30
+        },
+        {
+          "name": "getContentKF8",
+          "params": [
+            "kf8Book",
+            "chapter"
+          ],
+          "returnType": "String?",
+          "exported": false,
+          "lineCount": 32
+        },
+        {
+          "name": "format",
+          "params": [
+            "html"
+          ],
+          "returnType": "String",
+          "exported": false,
+          "lineCount": 5
+        },
+        {
+          "name": "getImage",
+          "params": [
+            "href"
+          ],
+          "returnType": "InputStream?",
+          "exported": false,
+          "lineCount": 7
+        },
+        {
+          "name": "getImageKF6",
+          "params": [
+            "kf6Book",
+            "href"
+          ],
+          "returnType": "InputStream?",
+          "exported": false,
+          "lineCount": 3
+        },
+        {
+          "name": "getImageKF8",
+          "params": [
+            "kf8Book",
+            "href"
+          ],
+          "returnType": "InputStream?",
+          "exported": false,
+          "lineCount": 3
+        },
+        {
+          "name": "upBookCover",
+          "params": [
+            "fastCheck"
+          ],
+          "exported": false,
+          "lineCount": 23
+        },
+        {
+          "name": "upBookInfo",
+          "params": [],
+          "exported": false,
+          "lineCount": 19
+        }
+      ],
+      "classes": [
+        {
+          "name": "MobiFile",
+          "methods": [
+            "readMobi",
+            "getChapterList",
+            "getChapterListKF6",
+            "getChapterListKF8",
+            "getContent",
+            "getContentKF6",
+            "getContentKF8",
+            "format",
+            "getImage",
+            "getImageKF6",
+            "getImageKF8",
+            "upBookCover",
+            "upBookInfo"
+          ],
+          "properties": [
+            "book",
+            "fileDescriptor",
+            "mobiBook"
+          ],
+          "exported": true,
+          "lineCount": 296
+        }
+      ],
+      "imports": [
+        {
+          "source": "android.graphics.Bitmap",
+          "specifiers": [
+            "Bitmap"
+          ]
+        },
+        {
+          "source": "android.graphics.BitmapFactory",
+          "specifiers": [
+            "BitmapFactory"
+          ]
+        },
+        {
+          "source": "android.os.ParcelFileDescriptor",
+          "specifiers": [
+            "ParcelFileDescriptor"
+          ]
+        },
+        {
+          "source": "io.legado.app.constant.AppLog",
+          "specifiers": [
+            "AppLog"
+          ]
+        },
+        {
+          "source": "io.legado.app.data.entities.Book",
+          "specifiers": [
+            "Book"
+          ]
+        },
+        {
+          "source": "io.legado.app.data.entities.BookChapter",
+          "specifiers": [
+            "BookChapter"
+          ]
+        },
+        {
+          "source": "io.legado.app.help.book.BookHelp",
+          "specifiers": [
+            "BookHelp"
+          ]
+        },
+        {
+          "source": "io.legado.app.lib.mobi.KF6Book",
+          "specifiers": [
+            "KF6Book"
+          ]
+        },
+        {
+          "source": "io.legado.app.lib.mobi.KF8Book",
+          "specifiers": [
+            "KF8Book"
+          ]
+        },
+        {
+          "source": "io.legado.app.lib.mobi.MobiBook",
+          "specifiers": [
+            "MobiBook"
+          ]
+        },
+        {
+          "source": "io.legado.app.lib.mobi.MobiReader",
+          "specifiers": [
+            "MobiReader"
+          ]
+        },
+        {
+          "source": "io.legado.app.lib.mobi.entities.TOC",
+          "specifiers": [
+            "TOC"
+          ]
+        },
+        {
+          "source": "io.legado.app.utils.FileUtils",
+          "specifiers": [
+            "FileUtils"
+          ]
+        },
+        {
+          "source": "io.legado.app.utils.HtmlFormatter",
+          "specifiers": [
+            "HtmlFormatter"
+          ]
+        },
+        {
+          "source": "io.legado.app.utils.printOnDebug",
+          "specifiers": [
+            "printOnDebug"
+          ]
+        },
+        {
+          "source": "org.jsoup.Jsoup",
+          "specifiers": [
+            "Jsoup"
+          ]
+        },
+        {
+          "source": "java.io.File",
+          "specifiers": [
+            "File"
+          ]
+        },
+        {
+          "source": "java.io.FileOutputStream",
+          "specifiers": [
+            "FileOutputStream"
+          ]
+        },
+        {
+          "source": "java.io.InputStream",
+          "specifiers": [
+            "InputStream"
+          ]
+        }
+      ],
+      "exports": [
+        "MobiFile"
+      ],
+      "totalLines": 319,
+      "hasStructuralAnalysis": true
+    },
+    "PdfFile.kt": {
+      "filePath": "PdfFile.kt",
+      "contentHash": "39695c47a968bc2540ae18be38ba5171b3244f38bce27801f3c2f079d41445bb",
+      "functions": [
+        {
+          "name": "readPdf",
+          "params": [],
+          "returnType": "PdfRenderer?",
+          "exported": false,
+          "lineCount": 15
+        },
+        {
+          "name": "closePdf",
+          "params": [],
+          "exported": false,
+          "lineCount": 4
+        },
+        {
+          "name": "openPdfPage",
+          "params": [
+            "renderer",
+            "index"
+          ],
+          "returnType": "Bitmap?",
+          "exported": false,
+          "lineCount": 15
+        },
+        {
+          "name": "getContent",
+          "params": [
+            "chapter"
+          ],
+          "returnType": "String?",
+          "exported": false,
+          "lineCount": 18
+        },
+        {
+          "name": "getImage",
+          "params": [
+            "href"
+          ],
+          "returnType": "InputStream?",
+          "exported": false,
+          "lineCount": 17
+        },
+        {
+          "name": "getChapterList",
+          "params": [],
+          "returnType": "ArrayList<BookChapter>",
+          "exported": false,
+          "lineCount": 18
+        },
+        {
+          "name": "upBookCover",
+          "params": [
+            "fastCheck"
+          ],
+          "exported": false,
+          "lineCount": 19
+        },
+        {
+          "name": "upBookInfo",
+          "params": [],
+          "exported": false,
+          "lineCount": 12
+        },
+        {
+          "name": "finalize",
+          "params": [],
+          "exported": true,
+          "lineCount": 3
+        }
+      ],
+      "classes": [
+        {
+          "name": "PdfFile",
+          "methods": [
+            "readPdf",
+            "closePdf",
+            "openPdfPage",
+            "getContent",
+            "getImage",
+            "getChapterList",
+            "upBookCover",
+            "upBookInfo",
+            "finalize"
+          ],
+          "properties": [
+            "book",
+            "fileDescriptor",
+            "pdfRenderer"
+          ],
+          "exported": true,
+          "lineCount": 207
+        }
+      ],
+      "imports": [
+        {
+          "source": "android.graphics.Bitmap",
+          "specifiers": [
+            "Bitmap"
+          ]
+        },
+        {
+          "source": "android.graphics.Color",
+          "specifiers": [
+            "Color"
+          ]
+        },
+        {
+          "source": "android.graphics.pdf.PdfRenderer",
+          "specifiers": [
+            "PdfRenderer"
+          ]
+        },
+        {
+          "source": "android.os.ParcelFileDescriptor",
+          "specifiers": [
+            "ParcelFileDescriptor"
+          ]
+        },
+        {
+          "source": "androidx.core.graphics.createBitmap",
+          "specifiers": [
+            "createBitmap"
+          ]
+        },
+        {
+          "source": "io.legado.app.constant.AppLog",
+          "specifiers": [
+            "AppLog"
+          ]
+        },
+        {
+          "source": "io.legado.app.data.entities.Book",
+          "specifiers": [
+            "Book"
+          ]
+        },
+        {
+          "source": "io.legado.app.data.entities.BookChapter",
+          "specifiers": [
+            "BookChapter"
+          ]
+        },
+        {
+          "source": "io.legado.app.help.book.getLocalUri",
+          "specifiers": [
+            "getLocalUri"
+          ]
+        },
+        {
+          "source": "io.legado.app.utils.BitmapUtils",
+          "specifiers": [
+            "BitmapUtils"
+          ]
+        },
+        {
+          "source": "io.legado.app.utils.FileUtils",
+          "specifiers": [
+            "FileUtils"
+          ]
+        },
+        {
+          "source": "io.legado.app.utils.SystemUtils",
+          "specifiers": [
+            "SystemUtils"
+          ]
+        },
+        {
+          "source": "io.legado.app.utils.isContentScheme",
+          "specifiers": [
+            "isContentScheme"
+          ]
+        },
+        {
+          "source": "io.legado.app.utils.printOnDebug",
+          "specifiers": [
+            "printOnDebug"
+          ]
+        },
+        {
+          "source": "splitties.init.appCtx",
+          "specifiers": [
+            "appCtx"
+          ]
+        },
+        {
+          "source": "java.io.File",
+          "specifiers": [
+            "File"
+          ]
+        },
+        {
+          "source": "java.io.FileOutputStream",
+          "specifiers": [
+            "FileOutputStream"
+          ]
+        },
+        {
+          "source": "java.io.InputStream",
+          "specifiers": [
+            "InputStream"
+          ]
+        },
+        {
+          "source": "kotlin.math.ceil",
+          "specifiers": [
+            "ceil"
+          ]
+        }
+      ],
+      "exports": [
+        "finalize",
+        "PdfFile"
+      ],
+      "totalLines": 230,
+      "hasStructuralAnalysis": true
+    },
+    "README.md": {
+      "filePath": "README.md",
+      "contentHash": "37a472a4179d903a500f67b5309b853cb371363b98fe9edfd519be3a9108463f",
+      "functions": [],
+      "classes": [],
+      "imports": [],
+      "exports": [],
+      "totalLines": 8,
+      "hasStructuralAnalysis": false
+    },
+    "TextFile.kt": {
+      "filePath": "TextFile.kt",
+      "contentHash": "c296f1f1f0de5fd5c6467613d1a25085090725884ca4cefe20d318db6c28d879",
+      "functions": [
+        {
+          "name": "getChapterList",
+          "params": [],
+          "returnType": "ArrayList<BookChapter>",
+          "exported": true,
+          "lineCount": 27
+        },
+        {
+          "name": "getContent",
+          "params": [
+            "chapter"
+          ],
+          "returnType": "String",
+          "exported": true,
+          "lineCount": 37
+        },
+        {
+          "name": "analyze",
+          "params": [
+            "pattern"
+          ],
+          "returnType": "Pair<ArrayList<BookChapter>, Int>",
+          "exported": false,
+          "lineCount": 185
+        },
+        {
+          "name": "analyze",
+          "params": [
+            "fileStart",
+            "fileEnd"
+          ],
+          "returnType": "Pair<ArrayList<BookChapter>, Int>",
+          "exported": false,
+          "lineCount": 97
+        },
+        {
+          "name": "getTocRule",
+          "params": [
+            "content"
+          ],
+          "returnType": "Pattern?",
+          "exported": false,
+          "lineCount": 27
+        },
+        {
+          "name": "getTocRules",
+          "params": [],
+          "returnType": "List<TxtTocRule>",
+          "exported": false,
+          "lineCount": 11
+        }
+      ],
+      "classes": [
+        {
+          "name": "TextFile",
+          "methods": [
+            "getChapterList",
+            "getContent",
+            "analyze",
+            "analyze",
+            "getTocRule",
+            "getTocRules"
+          ],
+          "properties": [
+            "book",
+            "blank",
+            "bufferSize",
+            "maxLengthWithNoToc",
+            "maxLengthWithToc",
+            "charset",
+            "txtBuffer",
+            "bufferStart",
+            "bufferEnd"
+          ],
+          "exported": true,
+          "lineCount": 458
+        }
+      ],
+      "imports": [
+        {
+          "source": "io.legado.app.constant.AppLog",
+          "specifiers": [
+            "AppLog"
+          ]
+        },
+        {
+          "source": "io.legado.app.data.appDb",
+          "specifiers": [
+            "appDb"
+          ]
+        },
+        {
+          "source": "io.legado.app.data.entities.Book",
+          "specifiers": [
+            "Book"
+          ]
+        },
+        {
+          "source": "io.legado.app.data.entities.BookChapter",
+          "specifiers": [
+            "BookChapter"
+          ]
+        },
+        {
+          "source": "io.legado.app.data.entities.TxtTocRule",
+          "specifiers": [
+            "TxtTocRule"
+          ]
+        },
+        {
+          "source": "io.legado.app.exception.EmptyFileException",
+          "specifiers": [
+            "EmptyFileException"
+          ]
+        },
+        {
+          "source": "io.legado.app.help.DefaultData",
+          "specifiers": [
+            "DefaultData"
+          ]
+        },
+        {
+          "source": "io.legado.app.help.book.isLocalModified",
+          "specifiers": [
+            "isLocalModified"
+          ]
+        },
+        {
+          "source": "io.legado.app.utils.EncodingDetect",
+          "specifiers": [
+            "EncodingDetect"
+          ]
+        },
+        {
+          "source": "io.legado.app.utils.MD5Utils",
+          "specifiers": [
+            "MD5Utils"
+          ]
+        },
+        {
+          "source": "io.legado.app.utils.StringUtils",
+          "specifiers": [
+            "StringUtils"
+          ]
+        },
+        {
+          "source": "io.legado.app.utils.Utf8BomUtils",
+          "specifiers": [
+            "Utf8BomUtils"
+          ]
+        },
+        {
+          "source": "java.io.FileNotFoundException",
+          "specifiers": [
+            "FileNotFoundException"
+          ]
+        },
+        {
+          "source": "java.nio.charset.Charset",
+          "specifiers": [
+            "Charset"
+          ]
+        },
+        {
+          "source": "java.util.regex.Matcher",
+          "specifiers": [
+            "Matcher"
+          ]
+        },
+        {
+          "source": "java.util.regex.Pattern",
+          "specifiers": [
+            "Pattern"
+          ]
+        },
+        {
+          "source": "java.util.regex.PatternSyntaxException",
+          "specifiers": [
+            "PatternSyntaxException"
+          ]
+        },
+        {
+          "source": "kotlin.math.min",
+          "specifiers": [
+            "min"
+          ]
+        }
+      ],
+      "exports": [
+        "getChapterList",
+        "getContent",
+        "TextFile"
+      ],
+      "totalLines": 479,
+      "hasStructuralAnalysis": true
+    },
+    "UmdFile.kt": {
+      "filePath": "UmdFile.kt",
+      "contentHash": "b1af1ed8451e884a18c91cfb27f108330527a47ae378049f094e048a7ee0c7ef",
+      "functions": [
+        {
+          "name": "readUmd",
+          "params": [],
+          "returnType": "UmdBook?",
+          "exported": false,
+          "lineCount": 4
+        },
+        {
+          "name": "upBookCover",
+          "params": [
+            "fastCheck"
+          ],
+          "exported": false,
+          "lineCount": 15
+        },
+        {
+          "name": "upBookInfo",
+          "params": [],
+          "exported": false,
+          "lineCount": 12
+        },
+        {
+          "name": "getContent",
+          "params": [
+            "chapter"
+          ],
+          "returnType": "String?",
+          "exported": false,
+          "lineCount": 3
+        },
+        {
+          "name": "getChapterList",
+          "params": [],
+          "returnType": "ArrayList<BookChapter>",
+          "exported": false,
+          "lineCount": 14
+        },
+        {
+          "name": "getImage",
+          "params": [
+            "href"
+          ],
+          "returnType": "InputStream?",
+          "exported": false,
+          "lineCount": 3
+        }
+      ],
+      "classes": [
+        {
+          "name": "UmdFile",
+          "methods": [
+            "readUmd",
+            "upBookCover",
+            "upBookInfo",
+            "getContent",
+            "getChapterList",
+            "getImage"
+          ],
+          "properties": [
+            "book",
+            "umdBook"
+          ],
+          "exported": true,
+          "lineCount": 111
+        }
+      ],
+      "imports": [
+        {
+          "source": "io.legado.app.data.entities.Book",
+          "specifiers": [
+            "Book"
+          ]
+        },
+        {
+          "source": "io.legado.app.data.entities.BookChapter",
+          "specifiers": [
+            "BookChapter"
+          ]
+        },
+        {
+          "source": "io.legado.app.utils.DebugLog",
+          "specifiers": [
+            "DebugLog"
+          ]
+        },
+        {
+          "source": "io.legado.app.utils.FileUtils",
+          "specifiers": [
+            "FileUtils"
+          ]
+        },
+        {
+          "source": "io.legado.app.utils.printOnDebug",
+          "specifiers": [
+            "printOnDebug"
+          ]
+        },
+        {
+          "source": "me.ag2s.umdlib.domain.UmdBook",
+          "specifiers": [
+            "UmdBook"
+          ]
+        },
+        {
+          "source": "me.ag2s.umdlib.umd.UmdReader",
+          "specifiers": [
+            "UmdReader"
+          ]
+        },
+        {
+          "source": "java.io.File",
+          "specifiers": [
+            "File"
+          ]
+        },
+        {
+          "source": "java.io.InputStream",
+          "specifiers": [
+            "InputStream"
+          ]
+        }
+      ],
+      "exports": [
+        "UmdFile"
+      ],
+      "totalLines": 123,
+      "hasStructuralAnalysis": true
+    }
+  }
+}
