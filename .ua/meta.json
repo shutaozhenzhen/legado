@@ -1,0 +1,19 @@
+{
+  "lastAnalyzedAt": "2026-11-08T21:20:08.1060532+08:00",
+  "edgeCount": 5645,
+  "analyzedFiles": 814,
+  "analyzedScopes": [
+    "ui",
+    "model",
+    "help",
+    "data",
+    "lib",
+    "utils",
+    "core",
+    "service",
+    "api"
+  ],
+  "version": "1.0.0",
+  "gitCommitHash": "dfd4f31defa40474ee5c469a059ea4e4d084b19d",
+  "nodeCount": 3732
+}
