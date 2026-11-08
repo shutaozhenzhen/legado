@@ -41,5 +41,5 @@ node .ua/tools/query.cjs hub --limit 15        # fan-in 最高的文件（改动
 - 跨 scope 的边在 scope 合并阶段被丢弃（`merge-batch-graphs.py` 只保留两端都在本 scope 的边），因此全仓图里 `imports` 偏少（706 条），模块之间的耦合主要靠「模块层 + 导览 + 同名符号」推断。
 - Kotlin 走 tree-sitter，重载方法合并为单节点；<10 行的 trivial 成员不建节点。
 - `table` 节点只覆盖 `data/entities` 下 21 张 @Entity 表。
-- 图谱是某次 commit 的快照；`meta.json.gitCommitHash` 与 `git rev-parse --short HEAD` 不一致时视为过期。
+- 图谱是某次 commit 的快照；基线之后若有 `.ua/` 之外的源码改动，`query.cjs` 会打印 `[stale]`。
 

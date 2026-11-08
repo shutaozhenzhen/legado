@@ -19,7 +19,7 @@ const SCOPES = [
   { key: 'data', dir: 'app/src/main/java/io/legado/app/data/', name: '数据层', desc: 'Room 数据库与迁移、21 个 DAO、@Entity 表、书源/书籍/RSS 实体与规则 JSON 列。' },
   { key: 'lib', dir: 'app/src/main/java/io/legado/app/lib/', name: '组件库', desc: '可复用组件：主题与主题化控件、prefs 与对话框、权限、MOBI/KF6/KF8 解析、cronet、icu4j 字符集检测、WebDAV 客户端。' },
   { key: 'utils', dir: 'app/src/main/java/io/legado/app/utils/', name: '工具库', desc: '通用工具：文件/编码/BOM、字符串与 JSON 扩展、SharedPreferences 缓存、位图与颜色、Canvas 录制与对象池、压缩包、View/Activity/WebView 扩展。' },
-  { key: 'core', dir: 'app/src/main/java/io/legado/app/', name: '基础设施', desc: 'Activity/Fragment/ViewModel 基座、RecyclerView 适配器、偏好键与常量、异常体系、广播接收器、NanoHTTPD/WebSocket 内置服务。', prefixes: ['base', 'constant', 'exception', 'receiver', 'web'] },
+  { key: 'core', dir: 'app/src/main/java/io/legado/app/', name: '基础设施', desc: 'Activity/Fragment/ViewModel 基座、RecyclerView 适配器、偏好键与常量、异常体系、广播接收器、NanoHTTPD/WebSocket 内置服务；根包 App.kt 为进程入口。', prefixes: ['base', 'constant', 'exception', 'receiver', 'web', 'App.kt'] },
   { key: 'service', dir: 'app/src/main/java/io/legado/app/service/', name: '服务层', desc: '后台服务：Web 服务、下载、书源校验、听书/TTS、缓存书籍、导出书籍、定时任务。' },
   { key: 'api', dir: 'app/src/main/java/io/legado/app/api/', name: '进程间接口', desc: 'ContentProvider/ShortCuts 等对外入口：ReaderProvider、BookController、书源/RSS/替换规则控制器与统一 ReturnData 契约。' },
 ];
@@ -60,7 +60,11 @@ for (const s of SCOPES) {
     const p = n.filePath || '';
     let hit = false;
     if (s.prefixes) {
-      hit = s.prefixes.some((pre) => p.startsWith(`app/src/main/java/io/legado/app/${pre}/`));
+      hit = s.prefixes.some((pre) =>
+        pre.endsWith('.kt')
+          ? p === `app/src/main/java/io/legado/app/${pre}`
+          : p.startsWith(`app/src/main/java/io/legado/app/${pre}/`)
+      );
     } else {
       hit = p.startsWith(s.dir);
     }
